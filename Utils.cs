@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace EdgeDetection;
 
@@ -13,6 +14,15 @@ internal static class Utils {
 			foreach (Transform descendant in Descendants(t.gameObject))
 				yield return descendant;
 		}
+	}
+
+	public static void RotateVertices(this Mesh mesh, Quaternion rotation)
+		=> mesh.RotateVertices(rotation, Vector3.zero);
+
+	public static void RotateVertices(this Mesh mesh, Quaternion rotation, Vector3 center) {
+		mesh.vertices = [.. mesh.vertices.Select(v => rotation * (v - center) + center)];
+		mesh.RecalculateNormals();
+		mesh.RecalculateBounds();
 	}
 
 }

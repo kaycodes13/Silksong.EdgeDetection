@@ -29,6 +29,8 @@ public class HideFromCamera : MonoBehaviour {
 	}
 
 	void SetVisible(bool value) {
+		if (!rend) Start();
+		if (!rend) return;
 		Color color = value ? Color.white : Color.clear;
 		if (rend.sharedMaterial) rend.sharedMaterial.color = color;
 		else if (rend.material) rend.material.color = color;

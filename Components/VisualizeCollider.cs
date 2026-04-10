@@ -23,12 +23,11 @@ internal class VisualizeCollider : MonoBehaviour {
 			return;
 		}
 
-		Mesh mesh = collider.CreateMesh(true, false, true);
+		Mesh mesh = collider.CreateMesh(true, true, true);
 		if (!mesh) return;
 
 		mesh.vertices = [.. mesh.vertices.Select(v => v - transform.position)];
-		mesh.RecalculateNormals();
-		mesh.RecalculateBounds();
+		mesh.RotateVertices(Quaternion.Inverse(transform.rotation));
 		mesh.colors = [.. Enumerable.Repeat(Color.white, mesh.vertexCount)];
 
 		if (!visParent) {
@@ -42,7 +41,7 @@ internal class VisualizeCollider : MonoBehaviour {
 		visT.Reset();
 
 		// If a collider damages, I don't care what layer it's actually on,
-		// edge-detect it in the same style as everything else that damages.
+		// edge-detect it in the same style as everything else that's hazardous.
 		if (transform.GetComponent<DamageEnemies>() || transform.GetComponent<DamageHero>())
 			visT.gameObject.layer = (int)PhysLayers.ENEMIES;
 
@@ -51,7 +50,7 @@ internal class VisualizeCollider : MonoBehaviour {
 		visGo.AddComponent<HideFromCamera>().hideFromMain = true;
 	}
 
-	void LateUpdate() {
+	void Update() {
 		if (!collider || !visGo)
 			Start();
 		else if (!collider.enabled || (lever && lever.hitBlocked))
