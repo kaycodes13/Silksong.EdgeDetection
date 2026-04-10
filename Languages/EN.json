@@ -1,0 +1,15 @@
+﻿{
+	"MOD_TITLE": "Edge Detection",
+	"TERRAIN_NAME": "Terrain Outlines",
+	"HAZARD_NAME": "Hazard Outlines",
+	"PLAYER_NAME": "Player Outline",
+
+	"BOOL_TRUE": "On",
+	"BOOL_FALSE": "Off",
+
+	"LINE_COLOUR_LABEL": "Colour",
+	"LINE_WIDTH_LABEL": "Width",
+
+	"HALF_RES_LABEL": "Low Resolution",
+	"HALF_RES_DESC": "May slightly improve performance."
+}

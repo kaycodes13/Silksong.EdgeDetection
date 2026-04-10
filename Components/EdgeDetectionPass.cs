@@ -1,5 +1,6 @@
 ﻿using GlobalEnums;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,6 +15,10 @@ namespace EdgeDetection.Components;
 public class EdgeDetectionPass : MonoBehaviour {
 
 	#region API
+
+	internal static readonly List<EdgeDetectionPass> Passes = [];
+
+	internal string Id { get; set; } = "";
 
 	/// <summary>
 	/// The colour that the outline will render as.
@@ -79,6 +84,7 @@ public class EdgeDetectionPass : MonoBehaviour {
 	public float clipFar = 40, clipNear = 35;
 
 	void Start() {
+		Passes.Add(this);
 		mainCam = GetComponent<Camera>();
 
 		detectorCam = new GameObject($"Edge Detection Camera").AddComponent<Camera>();
@@ -165,7 +171,7 @@ public class EdgeDetectionPass : MonoBehaviour {
 			Graphics.Blit(temp1, temp2, edgeDetectionMaterial);
 			(temp1, temp2) = (temp2, temp1);
 #if DEBUG
-			if (DebugOutput) SaveToFile($"2_edge_{i:00}", temp2);
+			if (DebugOutput) SaveToFile($"2_edge_{i:00}", temp1);
 #endif
 		}
 
@@ -173,7 +179,7 @@ public class EdgeDetectionPass : MonoBehaviour {
 		edgeDetectionMaterial.SetInteger(finalID, 1);
 		edgeDetectionMaterial.SetColor(lineColorID, LineColor);
 		edgeDetectionMaterial.SetTexture(sceneTexID, source);
-		Graphics.Blit(temp2, destination, edgeDetectionMaterial);
+		Graphics.Blit(temp1, destination, edgeDetectionMaterial);
 #if DEBUG
 		if (DebugOutput) SaveToFile($"3_dest", destination);
 #endif

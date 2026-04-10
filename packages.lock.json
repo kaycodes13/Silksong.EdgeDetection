@@ -52,6 +52,19 @@
         "resolved": "1.2.0-silksong1.0.30000",
         "contentHash": "2JPRsmFO5dBwLeIHA3kLlEYtu4BQ0Swdp3E4+J35IQGEujW3npMPot83BvY9wd3N7/Ycy2IfWilWC7fx6Sa3bg=="
       },
+      "Silksong.ModMenu": {
+        "type": "Direct",
+        "requested": "[0.5.2, )",
+        "resolved": "0.5.2",
+        "contentHash": "i+ttTX6A9TcXlBkS2+epqAKVlvP+Jh60R7GjbTM2RliVoU3UDM2QO+15Pknkl3VyuyLEhtIycTqCpATekoTKpw==",
+        "dependencies": {
+          "BepInEx.Core": "5.4.21",
+          "HarmonyX": "2.9.0",
+          "MonoDetour": "0.7.13",
+          "Silksong.UnityHelper": "1.2.0",
+          "UnityEngine.Modules": "6000.0.50"
+        }
+      },
       "UnityEngine.Modules": {
         "type": "Direct",
         "requested": "[6000.0.50, )",
@@ -77,6 +90,14 @@
         "type": "Transitive",
         "resolved": "0.11.4",
         "contentHash": "IC1h5g0NeJGHIUgzM1P82ld57knhP0IcQfrYITDPXlNpMYGUrsG5TxuaWTjaeqDNQMBDNZkB8L0rBnwsY6JHuQ=="
+      },
+      "MonoDetour": {
+        "type": "Transitive",
+        "resolved": "0.7.13",
+        "contentHash": "A1v0WMKfTbRv3O1l6Myel56AGWfC1SRaXvkXqhLgHL31sttxwMww/ncJS9jpsclqs4hPx8zqcM29AkrqM8WDAg==",
+        "dependencies": {
+          "MonoMod.RuntimeDetour": "21.12.13.1"
+        }
       },
       "MonoMod.RuntimeDetour": {
         "type": "Transitive",
@@ -105,6 +126,16 @@
           "System.Reflection.Emit.ILGeneration": "4.7.0",
           "System.Reflection.Emit.Lightweight": "4.7.0",
           "System.Reflection.TypeExtensions": "4.7.0"
+        }
+      },
+      "Silksong.UnityHelper": {
+        "type": "Transitive",
+        "resolved": "1.2.0",
+        "contentHash": "qneRu5HQnYPM9o4u3G09Ir4Xj2yIwIz80OREZqBko9WFVTvZcu+wKiFzGS3PoNbN8gGJIAW42s/3HPO+nQhCzQ==",
+        "dependencies": {
+          "BepInEx.Core": "5.4.21",
+          "HarmonyX": "2.9.0",
+          "UnityEngine.Modules": "6000.0.50"
         }
       },
       "System.Collections": {
