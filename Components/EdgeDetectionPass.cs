@@ -32,7 +32,7 @@ public class EdgeDetectionPass : MonoBehaviour {
 	/// </summary>
 	public uint LineWidth {
 		get => _width;
-		set => _width = Math.Clamp(value, 1u, 16u);
+		set => _width = Math.Clamp(value, 0u, 16u);
 	}
 	uint _width = 1;
 
