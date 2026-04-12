@@ -78,6 +78,7 @@ internal class VisualizeCollider : MonoBehaviour {
 		typeof(BouncePod), typeof(BounceBalloon),
 		typeof(DamageHero), typeof(DamageEnemies)
 	];
-	static bool VisualizableWhenTrigger(Collider2D collider) =>
-		validTriggerTypes.Any(x => collider.GetComponent(x));
+	static bool VisualizableWhenTrigger(Collider2D collider)
+		=> validTriggerTypes.Any(x => collider.GetComponent(x))
+			|| (collider.TryGetComponent<PlayMakerFSM>(out var fsm) && fsm.FsmName == "hornet_multi_wounder");
 }

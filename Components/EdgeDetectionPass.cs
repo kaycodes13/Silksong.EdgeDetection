@@ -89,17 +89,19 @@ public class EdgeDetectionPass : MonoBehaviour {
 		sceneTexID = Shader.PropertyToID("_SceneTex"),
 		finalID = Shader.PropertyToID("_FinalPass");
 
-	// TODO: test and adjust these as necessary
-	public float clipFar = 40, clipNear = 35;
-
 	void Start() {
 		Passes.Add(this);
 		mainCam = GetComponent<Camera>();
 
-		detectorCam = new GameObject($"Edge Detection Camera").AddComponent<Camera>();
+		detectorCam = new GameObject($"{Id} Edge Detection Camera").AddComponent<Camera>();
 		DontDestroyOnLoad(detectorCam);
 		detectorCam.enabled = false;
 		detectorCam.gameObject.AddComponent<EdgeDetector>().Settings = this;
+
+		transform.GetComponent<CameraShakeManager>()
+			.cameraTypeReference.Register(
+				detectorCam.gameObject.AddComponent<CameraShakeManager>()
+			);
 
 		silhouetteMaterial = new Material(SilhouetteShader);
 		edgeDetectionMaterial = new Material(EdgeDetectionShader);
@@ -137,8 +139,13 @@ public class EdgeDetectionPass : MonoBehaviour {
 		detectorCam.clearFlags = CameraClearFlags.SolidColor;
 		detectorCam.backgroundColor = Color.clear;
 		detectorCam.cullingMask = layerMask;
-		detectorCam.farClipPlane = clipFar;
-		detectorCam.nearClipPlane = clipNear;
+
+		// From IsOnHeroPlane
+		if (HeroController.instance) {
+			float z = HeroController.instance.transform.position.z - detectorCam.transform.position.z;
+			detectorCam.farClipPlane = z + 1.8f;
+			detectorCam.nearClipPlane = z - 1.8f;
+		}
 
 		// Grab the scene
 		if (camTarget && (camTarget.width != width || camTarget.height != height)) {

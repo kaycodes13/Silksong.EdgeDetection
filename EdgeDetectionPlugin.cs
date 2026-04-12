@@ -109,7 +109,7 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 
 		SliderElement<byte> width = new(
 			MenuUtils.Localized("LINE_WIDTH_LABEL"),
-			new ByteSliderModel(0, 16)
+			new ByteSliderModel(EdgeDetectionPass.WIDTH_MIN, EdgeDetectionPass.WIDTH_MAX)
 		);
 		width.Sync(widthConfig, x => pass.LineWidth = x);
 
