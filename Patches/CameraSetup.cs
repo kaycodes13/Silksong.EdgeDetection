@@ -1,4 +1,6 @@
-﻿using EdgeDetection.Components;
+﻿using BepInEx.Configuration;
+using EdgeDetection.Components;
+using System;
 
 namespace EdgeDetection.Patches;
 
@@ -13,6 +15,15 @@ internal static class CameraSetup {
 			detector.Layers = pass.Layers;
 			detector.HalfResolution = pass.HalfRes;
 			detector.AlphaThreshold = pass.Threshold;
+
+			if (Plugin.GetPassConfig(pass.Id, out var c, out var w, out var h)) {
+				c.SettingChanged += (_, e) => detector.LineColor = GetValue<Color>(e);
+				w.SettingChanged += (_, e) => detector.LineWidth = GetValue<byte>(e);
+				h.SettingChanged += (_, e) => detector.HalfResolution = GetValue<bool>(e);
+			}
 		}
+
+		static T GetValue<T>(EventArgs e)
+			=> (T)((SettingChangedEventArgs)e).ChangedSetting.BoxedValue;
 	}
 }

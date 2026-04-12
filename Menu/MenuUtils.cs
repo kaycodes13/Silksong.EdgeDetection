@@ -1,9 +1,6 @@
-﻿using BepInEx.Configuration;
-using GlobalEnums;
+﻿using GlobalEnums;
 using Silksong.ModMenu.Elements;
 using Silksong.ModMenu.Models;
-using Silksong.ModMenu.Plugin;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TeamCherry.Localization;
@@ -27,27 +24,10 @@ internal static class MenuUtils {
 		};
 
 	/// <summary>
-	/// Synchronizes the menu element model's and config entry's values,
-	/// and runs another function when the value changes.
+	/// Creates a GameObject on the UI layer and sets its parent.
 	/// </summary>
-	internal static void Sync<T>(this SelectableValueElement<T> elt, ConfigEntry<T> entry, Action<T> onValueChanged) {
-		elt.Model.OnValueChanged += onValueChanged;
-		elt.SynchronizeWith(entry);
-	}
-
-	extension(GameObject go) {
-		internal RectTransform RectTransform => (RectTransform)go.transform;
-
-		internal void SetAnchors(Vector2 anchor)
-			=> go.RectTransform.anchorMax = go.RectTransform.anchorMin = anchor;
-
-		internal void SetSizeDelta(Vector2 size) => go.RectTransform.sizeDelta = size;
-	}
-
 	internal static GameObject UIGameObject(string name, GameObject? parent) {
-		GameObject go = new(name) {
-			layer = (int)PhysLayers.UI
-		};
+		GameObject go = new(name) { layer = (int)PhysLayers.UI };
 		if (parent)
 			go.transform.SetParentReset(parent.transform);
 		return go;
@@ -63,8 +43,14 @@ internal static class MenuUtils {
 	}
 	static Shader? uiShader;
 
-	internal static IEnumerable<Selectable> AllSelectables(this VerticalGroup group)
-		=> group.AllElements().OfType<SelectableElement>().Select(x => x.SelectableComponent);
+	extension (GameObject go) {
+		internal RectTransform RectTransform => (RectTransform)go.transform;
+
+		internal void SetAnchors(Vector2 anchor)
+			=> go.RectTransform.anchorMax = go.RectTransform.anchorMin = anchor;
+
+		internal void SetSizeDelta(Vector2 size) => go.RectTransform.sizeDelta = size;
+	}
 
 	extension (Transform t) {
 		internal RectTransform AsRect => (RectTransform)t;
@@ -72,4 +58,8 @@ internal static class MenuUtils {
 			=> t.AsRect.anchorMax = t.AsRect.anchorMin = anchor;
 	}
 
+	extension (VerticalGroup v) {
+		internal IEnumerable<Selectable> AllSelectables()
+			=> v.AllElements().OfType<SelectableElement>().Select(x => x.SelectableComponent);
+	}
 }

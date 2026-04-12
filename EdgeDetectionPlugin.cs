@@ -1,4 +1,5 @@
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using EdgeDetection.Components;
 using EdgeDetection.Menu;
@@ -77,7 +78,13 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 		foreach(var pass in PassDefs) {
 			PassDefs[i++] = pass with {
 				Colour = Config.Bind(pass.Id, "Colour", pass.Colour).Value,
-				Width = Config.Bind(pass.Id, "Width", pass.Width).Value,
+				Width = Config.Bind(
+						pass.Id, "Width", pass.Width,
+						new ConfigDescription("", new AcceptableValueRange<byte>(
+							EdgeDetectionPass.WIDTH_MIN,
+							EdgeDetectionPass.WIDTH_MAX
+						))
+					).Value,
 				HalfRes = Config.Bind(pass.Id, "Low Res", pass.HalfRes).Value,
 			};
 		}
@@ -86,8 +93,16 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 		Log.LogInfo($"Plugin {Name} ({Id}) has loaded!");
 	}
 
+	internal bool GetPassConfig(string id, out ConfigEntry<Color> colour, out ConfigEntry<byte> width, out ConfigEntry<bool> halfRes) {
+		bool flag = Config.TryGetEntry(id, "Colour", out colour);
+		flag &= Config.TryGetEntry(id, "Width", out width);
+		flag &= Config.TryGetEntry(id, "Low Res", out halfRes);
+		if (!flag)
+			Log.LogWarning($"Failed to load configuration for {id} pass.");
+		return flag;
+	}
 
-	public LocalizedText ModMenuName() => MenuUtils.Localized("MOD_TITLE");
+	public LocalizedText ModMenuName() => Localized("MOD_TITLE");
 
 	public AbstractMenuScreen BuildCustomMenu() {
 		VerticalGroup group = new();
@@ -99,27 +114,26 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 	/// Menu options for an <see cref="EdgeDetectionPass"/>.
 	/// </summary>
 	IEnumerable<MenuElement> GenerateDetectorOptions(EdgeDetectionPass pass) {
-		Config.TryGetEntry<Color>(pass.Id, "Colour", out var colourConfig);
-		Config.TryGetEntry<byte>(pass.Id, "Width", out var widthConfig);
-		Config.TryGetEntry<bool>(pass.Id, "Low Res", out var halfResConfig);
-
-		SubtitleLabel title = new(MenuUtils.Localized($"{pass.Id}_NAME"));
+		SubtitleLabel title = new(Localized($"{pass.Id}_NAME"));
 
 		HexColorInput colour = new(Localized("LINE_COLOUR_LABEL"));
-		colour.Sync(colourConfig, x => pass.LineColor = x);
 
 		WiderSliderElement<byte> width = new(
 			Localized("LINE_WIDTH_LABEL"),
 			new ByteSliderModel(EdgeDetectionPass.WIDTH_MIN, EdgeDetectionPass.WIDTH_MAX)
 		);
-		width.Sync(widthConfig, x => pass.LineWidth = x);
 
 		ChoiceElement<bool> halfRes = new(
 			Localized("HALF_RES_LABEL"),
 			LocalizedBoolModel(),
 			Localized("HALF_RES_DESC")
 		);
-		halfRes.Sync(halfResConfig, x => pass.HalfResolution = x);
+
+		if (GetPassConfig(pass.Id, out var c, out var w, out var h)) {
+			colour.SynchronizeWith(c);
+			width.SynchronizeWith(w);
+			halfRes.SynchronizeWith(h);
+		}
 
 		return [title, colour, width, halfRes];
 	}
