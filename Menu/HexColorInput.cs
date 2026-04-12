@@ -39,7 +39,7 @@ internal class HexColorInput : TextInput<Color> {
 
 		var swatchT = (RectTransform)swatch.transform;
 		swatchT.sizeDelta = new Vector2(40, 40);
-		swatchT.anchorMax = swatchT.anchorMin = new Vector2(0.15f, 0.5f);
+		swatchT.anchorMax = swatchT.anchorMin = new Vector2(0, 0.5f);
 
 		Model.OnValueChanged += color => image.material.color = color;
 	}

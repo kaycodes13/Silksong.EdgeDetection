@@ -1,8 +1,8 @@
 ﻿{
 	"MOD_TITLE": "Edge Detection",
-	"TERRAIN_NAME": "Terrain Outlines",
-	"HAZARD_NAME": "Hazard Outlines",
-	"PLAYER_NAME": "Player Outline",
+	"TERRAIN_NAME": "Terrain/Interactive",
+	"HAZARD_NAME": "Hazard",
+	"PLAYER_NAME": "Player",
 
 	"BOOL_TRUE": "On",
 	"BOOL_FALSE": "Off",

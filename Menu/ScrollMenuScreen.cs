@@ -1,189 +1,137 @@
-﻿using GlobalEnums;
-using Silksong.ModMenu.Elements;
+﻿using Silksong.ModMenu.Elements;
 using Silksong.ModMenu.Screens;
-using Silksong.UnityHelper.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.EventSystems;
+using TeamCherry.SharedUtils;
 using UnityEngine.UI;
+using static EdgeDetection.Menu.MenuUtils;
 
 namespace EdgeDetection.Menu;
 
 /// <summary>
 /// A vertically scrolling menu screen with a single VerticalGroup for the content panel.
-/// Sufficient for simple menus with any number of elements at any size.
+/// Sufficient for simple menus with an arbitrary number of elements.
 /// </summary>
 internal class ScrollMenuScreen : AbstractMenuScreen {
 
-	public VerticalGroup Content {
-		get => _content;
-		set {
-			if (value == null)
-				throw new ArgumentNullException(nameof(Content));
-			if (_content != value && _content != null){
-				_content.ClearParents();
-				foreach (var e in _content.AllElements().OfType<SelectableElement>())
-					e.SelectableComponent.gameObject.RemoveComponent<OnSelectedTrigger>();
-			}
-			_content = value;
-			_content.SetGameObjectParent(Elements);
-		}
-	}
-	VerticalGroup _content;
+	const int
+		MASK_SOFTNESS = 100,
+		PADDING_BOTTOM = 100,
+		PADDING_FULL = 125;
+	const float
+		VIEWPORT_WIDTH = 1920,
+		VIEWPORT_HEIGHT = 825,
+		SCROLLPANE_WIDTH = 1480;
 
-	public ScrollRect ScrollRect => ScrollPane.GetComponent<ScrollRect>();
-	public RectMask2D ViewportMask => Viewport.GetComponent<RectMask2D>();
-
-	GameObject ScrollPane => ContentPane;
-	GameObject Viewport { get; set; }
-	GameObject Elements { get; set; }
-	GameObject Bar { get; set; }
-	GameObject BarHandle { get; set; }
-
-	RectTransform ScrollPaneT => (RectTransform)ScrollPane.transform;
-	RectTransform ViewportT => (RectTransform)Viewport.transform;
-	RectTransform ElementsT => (RectTransform)Elements.transform;
-	VerticalLayoutGroup ElementsGrp => Elements.GetComponent<VerticalLayoutGroup>();
-	RectTransform BarT => (RectTransform)Bar.transform;
-	RectTransform BarHandleT => (RectTransform)BarHandle.transform;
-
-	static Sprite ViewportSprite =>
-		UIManager.instance.transform
-		.Find("UICanvas/BrightnessMenuScreen/Content/BrightnessCalibrationImage")
-		.GetComponent<Image>().sprite;
+	readonly GameObject ScrollPane, Viewport, Bar, Handle;
 
 	public ScrollMenuScreen(LocalizedText title, VerticalGroup content) : base(title) {
 		// create objects
-		ScrollPane.name = "ScrollPane";
-		Viewport = new("Viewport");
-		Elements = new("Elements");
-		Bar = new("Scrollbar");
-		BarHandle = new("Handle");
-		ScrollPane.layer = Viewport.layer = Elements.layer = Bar.layer = BarHandle.layer = (int)PhysLayers.UI;
+		ScrollPane = UIGameObject("ScrollPane", parent: Container);
+			Viewport = UIGameObject("Viewport", parent: ScrollPane);
+				ContentPane.transform.SetParentReset(Viewport.transform);
+					Content = content;
+			Bar = UIGameObject("Scrollbar", parent: ScrollPane);
+				Handle = UIGameObject("Handle", parent: Bar);
 
-		// setup hierarchy
-		ScrollPane.transform.Reset();
-
-		Viewport.transform.SetParent(ScrollPane.transform, false);
-		Viewport.transform.Reset();
-		Elements.transform.SetParent(Viewport.transform, false);
-		Elements.transform.Reset();
-
-		Bar.transform.SetParent(ScrollPane.transform, false);
-		Bar.transform.Reset();
-		BarHandle.transform.SetParent(Bar.transform, false);
-		BarHandle.transform.Reset();
-
-		// add components - content container
-		var group = Elements.AddComponent<VerticalLayoutGroup>();
-		group.childAlignment = TextAnchor.UpperCenter;
-		group.padding.bottom = 100;
-		group.padding.top = 50;
-		group.childForceExpandHeight = true;
-
-		// add content
-		Content = content;
-
-		Shader uishader = Shader.Find("UI/Default");
-
-		// add components - viewport
-		var image = Viewport.AddComponent<Image>();
-		image.sprite = ViewportSprite;
-		image.SetNativeSize();
-		image.material = new Material(uishader) { color = Color.clear };
-		var mask = Viewport.AddComponent<RectMask2D>();
-		mask.softness = new Vector2Int(0, 100);
-
-		// add components - scrollbar
-		var handleImg = BarHandle.AddComponent<Image>();
-		handleImg.material = new Material(uishader) { color = Color.white };
-
-		var barImg = Bar.AddComponent<Image>();
-		barImg.material = new Material(uishader) { color = new Color(0.428f, 0.439f, 0.459f, 1) };
-		var scrollbar = Bar.AddComponent<Scrollbar>();
-		scrollbar.direction = Scrollbar.Direction.BottomToTop;
-		scrollbar.handleRect = BarHandleT;
-
-		// add components - scroll pane
-		var scroller = ScrollPane.AddComponent<ScrollRect>();
-		scroller.horizontal = false;
-		scroller.vertical = true;
-		scroller.movementType = ScrollRect.MovementType.Clamped;
-		scroller.scrollSensitivity = 50;
-		scroller.viewport = ViewportT;
-		scroller.content = ElementsT;
-		scroller.verticalScrollbar = scrollbar;
-		scroller.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
-
-		// ensure all anchors/sizes/positions are correct
 		Vector2 center = Vector2.one * 0.5f;
 
-		ScrollPaneT.anchorMax = ScrollPaneT.anchorMin = center;
-		ScrollPaneT.sizeDelta = new Vector2(1500, 766);
-		ScrollPaneT.localPosition = new Vector3(0, -40, 0);
+		// add & set up components, from the bottom up
+		Handle.AddComponent<Image>().material = UIMaterial(Color.white);
+		Handle.SetSizeDelta(Vector2.one);
 
-		ViewportT.anchorMax = ViewportT.anchorMin = center;
-		ViewportT.sizeDelta = new Vector2(1920, 950);
-		
-		ElementsT.anchorMax = ElementsT.anchorMin = center;
-		ElementsT.sizeDelta = new(1920, Content.AllElements().Count() * Content.VerticalSpacing + ElementsGrp.padding.vertical);
+		Bar.AddComponent<Image>().material = UIMaterial(new Color(1, 1, 1, 0.4f));
+		var scrollbar = Bar.AddComponent<Scrollbar>();
+		scrollbar.direction = Scrollbar.Direction.BottomToTop;
+		scrollbar.handleRect = Handle.RectTransform;
+		Bar.SetAnchors(new Vector2(1, 0.5f));
+		Bar.SetSizeDelta(new Vector2(7, VIEWPORT_HEIGHT));
 
-		BarT.anchorMax = BarT.anchorMin = new Vector2(1, 0.5f);
-		BarT.sizeDelta = new Vector2(7, 800);
+		ContentPane.SetAnchors(center);
 
-		BarHandleT.sizeDelta = Vector2.one;
+		Viewport.AddComponent<Image>().material = UIMaterial(Color.clear);
+		Viewport.AddComponent<RectMask2D>().softness = new Vector2Int(0, MASK_SOFTNESS);
+		Viewport.SetAnchors(center);
+		Viewport.SetSizeDelta(new Vector2(VIEWPORT_WIDTH, VIEWPORT_HEIGHT + PADDING_FULL));
 
-		// make sure it always starts at the top
-		scroller.normalizedPosition = Vector2.up;
-		OnShow += _ => scroller.normalizedPosition = Vector2.up;
+		var scrollRect = ScrollPane.AddComponent<ScrollRect>();
+		scrollRect.horizontal = false;
+		scrollRect.vertical = true;
+		scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+		scrollRect.movementType = ScrollRect.MovementType.Clamped;
+		scrollRect.scrollSensitivity = 50;
+		scrollRect.viewport = Viewport.RectTransform;
+		scrollRect.content = ContentPane.RectTransform;
+		scrollRect.verticalScrollbar = scrollbar;
+		ScrollPane.SetAnchors(center);
+		ScrollPane.SetSizeDelta(new Vector2(SCROLLPANE_WIDTH, VIEWPORT_HEIGHT + PADDING_FULL));
+		ScrollPane.RectTransform.localPosition = new Vector3(0, -40, 0);
+
+		// additional scrolling logic
+		OnShow += navType => {
+			UpdateLayout();
+			SelectOnShow(navType).GetComponent<ScrollNavHelper>().ScrollToInstant();
+		};
 	}
 
+	/// <summary>
+	/// The content displayed by this menu screen, minus the back button.
+	/// </summary>
+	public VerticalGroup Content {
+		get => field;
+		set {
+			if (value == null)
+				throw new System.ArgumentNullException(nameof(Content));
+			if (field != value && field != null) {
+				field.ClearParents();
+				foreach (var e in field.AllSelectables())
+					if (e.TryGetComponent<ScrollNavHelper>(out var navHelper))
+						Object.Destroy(navHelper);
+			}
+			field = value;
+			AddChild(field);
+			field.SetGameObjectParent(ContentPane);
+		}
+	}
+
+	/// <summary>
+	/// The actual <see cref="ScrollRect"/> component that controls the
+	/// scrolling sensitivity and movement type.
+	/// </summary>
+	public ScrollRect ScrollRect => ScrollPane.GetComponent<ScrollRect>();
+
+	/// <inheritdoc/>
 	protected override IEnumerable<IMenuEntity> AllEntities() => [Content];
 
-	protected override SelectableElement? GetDefaultSelectableInternal() => Content.GetDefaultSelectable();
+	/// <inheritdoc/>
+	protected override SelectableElement? GetDefaultSelectableInternal()
+		=> Content.GetDefaultSelectable();
 
+	/// <inheritdoc/>
 	protected override void UpdateLayout() {
-		Content.UpdateLayout(SpacingConstants.TOP_CENTER_ANCHOR);
-		ElementsT.sizeDelta = new(1920, Content.AllElements().Count() * Content.VerticalSpacing + ElementsGrp.padding.vertical);
+		MenuElement[] elements = [..
+			Content.AllElements()
+			.Where(x => !Content.HideInactiveElements || x.Visibility.VisibleInHierarchy)
+		];
+		float sizeY = Mathf.Max(VIEWPORT_HEIGHT, elements.Length * Content.VerticalSpacing) + PADDING_FULL;
 
-		foreach (var e in _content.AllElements().OfType<SelectableElement>()) {
-			var go = e.SelectableComponent.gameObject;
-			if (!go.GetComponent<OnSelectedTrigger>())
-				go.AddComponent<OnSelectedTrigger>().Fn = ScrollIntoView;
+		ContentPane.SetSizeDelta(new Vector2(VIEWPORT_WIDTH, sizeY));
+		Content.UpdateLayout(new(0, sizeY / 2f - PADDING_BOTTOM));
+
+		foreach(var e in Content.AllSelectables()) {
+			e.gameObject.AddComponentIfNotPresent<ScrollNavHelper>()
+				.Panes = (ScrollPane, Viewport, ContentPane);
 		}
 
-		BackButton.navigation = new Navigation() {
-			mode = Navigation.Mode.Explicit,
-			wrapAround = false
-		};
 		Content.SetNeighborDown(BackButton);
 		Content.SetNeighborUp(BackButton);
-		if (Content.GetNeighborDown(out var selectable))
-			BackButton.navigation = BackButton.navigation with { selectOnDown = selectable };
-		if (Content.GetNeighborUp(out selectable))
-			BackButton.navigation = BackButton.navigation with { selectOnUp = selectable };
-	}
 
-	// TODO: this keeps firing for mouse events :))))))))
-	void ScrollIntoView(BaseEventData baseData) {
-		if (baseData is not AxisEventData || ElementsT.sizeDelta.y <= ViewportT.sizeDelta.y)
-			return;
-
-		RectTransform target = (RectTransform)baseData.selectedObject.transform;
-
-		Vector3 newPos =
-			ScrollPaneT.InverseTransformPoint(ElementsT.position)
-			- ScrollPaneT.InverseTransformPoint(target.position);
-
-		float maxOffset = (ElementsT.sizeDelta.y - ViewportT.sizeDelta.y) / 2f;
-
-		ElementsT.anchoredPosition = new(0, Mathf.Clamp(newPos.y, -maxOffset, maxOffset));
-	}
-
-	private class OnSelectedTrigger : EventTrigger {
-		public Action<BaseEventData>? Fn;
-		public override void OnSelect(BaseEventData eventData) => Fn?.Invoke(eventData);
+		BackButton.navigation = new Navigation {
+			mode = Navigation.Mode.Explicit,
+			wrapAround = false,
+			selectOnDown = Content.GetNeighborDown(out var down) ? down : null,
+			selectOnUp = Content.GetNeighborUp(out var up) ? up : null,
+		};
 	}
 
 }
