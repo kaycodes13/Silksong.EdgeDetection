@@ -16,10 +16,6 @@ public class EdgeDetectionPass : MonoBehaviour {
 
 	#region API
 
-	internal static readonly List<EdgeDetectionPass> Passes = [];
-
-	internal string Id { get; set; } = "";
-
 	/// <summary>
 	/// The colour that the outline will render as.
 	/// The alpha channel is ignored; outlines are always at full opacity.
@@ -30,11 +26,10 @@ public class EdgeDetectionPass : MonoBehaviour {
 	/// The width, in pixels, of the outline.
 	/// If <see cref="HalfResolution"/> is true, lines will look double this size.
 	/// </summary>
-	public uint LineWidth {
-		get => _width;
-		set => _width = Math.Clamp(value, 0u, 16u);
-	}
-	uint _width = 1;
+	public byte LineWidth {
+		get => field;
+		set => field = Math.Clamp(value, WIDTH_MIN, WIDTH_MAX);
+	} = 1;
 
 	/// <summary>
 	/// The layers that will be outlined.
@@ -42,15 +37,14 @@ public class EdgeDetectionPass : MonoBehaviour {
 	/// contents you have to set an entirely new array here.
 	/// </summary>
 	public PhysLayers[] Layers {
-		get => _layers;
+		get => field;
 		set {
-			_layers = value;
+			field = value;
 			layerMask = LayerMask.GetMask(
-				[.. value.Select(x => LayerMask.LayerToName((int)x))]
+				[.. field.Select(x => LayerMask.LayerToName((int)x))]
 			);
 		}
-	}
-	PhysLayers[] _layers = [PhysLayers.PLAYER];
+	} = [PhysLayers.PLAYER];
 	int layerMask = LayerMask.GetMask(LayerMask.LayerToName((int)PhysLayers.PLAYER));
 
 	/// <summary>
@@ -63,12 +57,27 @@ public class EdgeDetectionPass : MonoBehaviour {
 	/// Minimum alpha value of a pixel for it to be included in the edge detection mask.
 	/// </summary>
 	public float AlphaThreshold {
-		get => _thresh;
-		set => _thresh = Mathf.Clamp01(value);
+		get => field;
+		set => field = Mathf.Clamp01(value);
 	}
-	float _thresh = 0.4f;
 
 	#endregion
+
+	/// <summary>
+	/// Internal ID for the pass.
+	/// Used in localizing its menu options and naming its camera.
+	/// </summary>
+	internal string Id { get; set; } = "";
+
+	/// <summary>
+	/// List of all existing passes.
+	/// </summary>
+	internal static readonly List<EdgeDetectionPass> Passes = [];
+
+	/// <summary>Minimum outline width.</summary>
+	internal const byte WIDTH_MIN = 0;
+	/// <summary>Maximum outline width.</summary>
+	internal const byte WIDTH_MAX = 16;
 
 	Material silhouetteMaterial, edgeDetectionMaterial;
 	Camera mainCam, detectorCam;
@@ -110,6 +119,7 @@ public class EdgeDetectionPass : MonoBehaviour {
 				camTarget.Release();
 			DestroyImmediate(camTarget);
 		}
+		Passes.Remove(this);
 	}
 
 	void OnRenderImage(RenderTexture source, RenderTexture destination) {

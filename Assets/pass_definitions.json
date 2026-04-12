@@ -1,0 +1,39 @@
+﻿[
+	{
+		"Id": "TERRAIN",
+		"Colour": { "r": 0, "g": 1, "b": 1 },
+		"Width": 3,
+		"HalfRes": false,
+		"Layers": [
+			"TERRAIN",
+			"INTERACTIVE_OBJECT",
+			"BOUNCER",
+			"DAMAGE_ALL"
+		],
+		"Threshold": 0.7
+	},
+	{
+		"Id": "HAZARD",
+		"Colour": { "r": 1, "g": 0, "b": 0 },
+		"Width": 3,
+		"HalfRes": false,
+		"Layers": [
+			"ENEMIES",
+			"ENEMY_ATTACK",
+			"HERO_ATTACK",
+			"PROJECTILES",
+			"TERRAIN_DETECTOR"
+		],
+		"Threshold": 0.4
+	},
+	{
+		"Id": "PLAYER",
+		"Colour": { "r": 1, "g": 1, "b": 0 },
+		"Width": 3,
+		"HalfRes": false,
+		"Layers": [
+			"PLAYER"
+		],
+		"Threshold": 0.5
+	}
+]
