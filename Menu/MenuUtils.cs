@@ -12,7 +12,6 @@ using UnityEngine.UI;
 namespace EdgeDetection.Menu;
 
 internal static class MenuUtils {
-
 	/// <summary>
 	/// <see cref="LocalisedString"/> with the given <paramref name="key"/> for this mod.
 	/// </summary>
@@ -54,16 +53,23 @@ internal static class MenuUtils {
 		return go;
 	}
 
+	/// <summary>
+	/// Creates a new material using the default UI shader.
+	/// </summary>
 	internal static Material UIMaterial(Color? color = null) {
 		if (!uiShader)
 			uiShader = Shader.Find("UI/Default");
-		return new Material(uiShader) {
-			color = color ?? Color.white
-		};
+		return new Material(uiShader) { color = color ?? Color.white };
 	}
 	static Shader? uiShader;
 
 	internal static IEnumerable<Selectable> AllSelectables(this VerticalGroup group)
 		=> group.AllElements().OfType<SelectableElement>().Select(x => x.SelectableComponent);
+
+	extension (Transform t) {
+		internal RectTransform AsRect => (RectTransform)t;
+		internal void SetAnchors(Vector2 anchor)
+			=> t.AsRect.anchorMax = t.AsRect.anchorMin = anchor;
+	}
 
 }

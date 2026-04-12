@@ -8,6 +8,7 @@ using Silksong.ModMenu.Plugin;
 using Silksong.ModMenu.Screens;
 using System.Collections.Generic;
 using System.Linq;
+using static EdgeDetection.Menu.MenuUtils;
 
 namespace EdgeDetection;
 
@@ -104,19 +105,19 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 
 		SubtitleLabel title = new(MenuUtils.Localized($"{pass.Id}_NAME"));
 
-		HexColorInput colour = new(MenuUtils.Localized("LINE_COLOUR_LABEL"));
+		HexColorInput colour = new(Localized("LINE_COLOUR_LABEL"));
 		colour.Sync(colourConfig, x => pass.LineColor = x);
 
-		SliderElement<byte> width = new(
-			MenuUtils.Localized("LINE_WIDTH_LABEL"),
+		WiderSliderElement<byte> width = new(
+			Localized("LINE_WIDTH_LABEL"),
 			new ByteSliderModel(EdgeDetectionPass.WIDTH_MIN, EdgeDetectionPass.WIDTH_MAX)
 		);
 		width.Sync(widthConfig, x => pass.LineWidth = x);
 
-		var halfRes = new ChoiceElement<bool>(
-			MenuUtils.Localized("HALF_RES_LABEL"),
-			MenuUtils.LocalizedBoolModel(),
-			MenuUtils.Localized("HALF_RES_DESC")
+		ChoiceElement<bool> halfRes = new(
+			Localized("HALF_RES_LABEL"),
+			LocalizedBoolModel(),
+			Localized("HALF_RES_DESC")
 		);
 		halfRes.Sync(halfResConfig, x => pass.HalfResolution = x);
 
