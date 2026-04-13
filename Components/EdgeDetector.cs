@@ -6,5 +6,5 @@
 /// </summary>
 [RequireComponent(typeof(Camera))]
 public class EdgeDetector : MonoBehaviour {
-	public EdgeDetectionPass Settings { get; internal set; }
+	public EdgeDetectionPass Settings { get; internal set; } = null!;
 }
