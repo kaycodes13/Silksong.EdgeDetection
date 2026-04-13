@@ -1,0 +1,41 @@
+{
+  "HideRenderer": [
+    "Sphere Flash",
+    "Parry Stance Flash",
+    "Parry Clash Effect",
+    "Parry Thread",
+    "Parry DashBurst",
+    "Dash Burst",
+    "NA Charge",
+    "NA Charged",
+    "Wall Puff",
+    "Backflip Puff",
+    "Downspike Burst",
+    "Swimp Bonk Effect",
+    "Super Jump Antic Effect R",
+    "Super Jump Antic Effect L",
+    "Water Dash Burst",
+    "Hunter SprintAttackBurst",
+    "Wanderer DashComboBurst",
+    "Taunt Rings Flash",
+    "Heal Anim",
+    "Bind Silk"
+  ],
+  "HideCollider": [
+    "Super Jump Damager",
+    "Taunt Slash",
+    "Harpoon Breaker",
+    "Harpoon Breaker Extend",
+    "Harpoon Dash Damager"
+  ],
+  "HideSubColliders": {
+    "Super Jump Needle Throw": "HERO_ATTACK",
+    "Charge Slash Basic": "HERO_ATTACK",
+    "Charge Slash Scythe": "HERO_ATTACK",
+    "Charge Slash Warrior": "HERO_ATTACK",
+    "Charge Slash Warrior Rage": "HERO_ATTACK",
+    "Charge Slash Witch": "HERO_ATTACK",
+    "Charge Slash Toolmaster": "HERO_ATTACK",
+    "Charge Slash Shaman": "HERO_ATTACK"
+  }
+}

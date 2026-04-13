@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using UObject = UnityEngine.Object;
 
 namespace EdgeDetection;
 
@@ -21,8 +22,8 @@ internal static class Utils {
 	/// Streams the embedded resource at <paramref name="path"/>,
 	/// invokes <paramref name="action"/>, disposes of the stream.
 	/// </summary>
-	internal static void ReadResource(string path, Action<Stream> action) {
-		using Stream stream = asm.GetManifestResourceStream(path);
+	internal static void ReadAsset(string path, Action<Stream> action) {
+		using Stream stream = asm.GetManifestResourceStream($"{nameof(EdgeDetection)}.Assets.{path}");
 		action.Invoke(stream);
 	}
 
@@ -30,12 +31,21 @@ internal static class Utils {
 	/// Deserializes the embedded json file at <paramref name="path"/>
 	/// to data of type <typeparamref name="T"/>.
 	/// </summary>
-	internal static T ReadJson<T>(string path) {
+	internal static T ReadJsonAsset<T>(string path) {
 		T value;
-		using (StreamReader reader = new(asm.GetManifestResourceStream(path))) {
+		using (StreamReader reader = new(asm.GetManifestResourceStream($"{nameof(EdgeDetection)}.Assets.{path}"))) {
 			value = JsonConvert.DeserializeObject<T>(reader.ReadToEnd())!;
 		}
 		return value;
+	}
+
+	/// <summary>
+	/// Enumerates a GameObject and all its descendants.
+	/// </summary>
+	internal static IEnumerable<Transform> SelfAndDescendants(GameObject go) {
+		yield return go.transform;
+		foreach (Transform descendant in Descendants(go))
+			yield return descendant;
 	}
 
 	/// <summary>
@@ -49,21 +59,23 @@ internal static class Utils {
 		}
 	}
 
-	/// <summary>
-	/// Rotates a <see cref="Mesh"/>'s vertices about <see cref="Vector3.zero"/>.
-	/// </summary>
-	internal static void RotateVertices(this Mesh mesh, Quaternion rotation)
-		=> mesh.RotateVertices(rotation, Vector3.zero);
+	extension (Mesh mesh) {
+		/// <summary>
+		/// Rotates a <see cref="Mesh"/>'s vertices about <see cref="Vector3.zero"/>.
+		/// </summary>
+		internal void RotateVertices(Quaternion rotation)
+			=> mesh.RotateVertices(rotation, Vector3.zero);
 
-	/// <summary>
-	/// Rotates a <see cref="Mesh"/>'s vertices about <paramref name="center"/>.
-	/// </summary>
-	internal static void RotateVertices(this Mesh mesh, Quaternion rotation, Vector3 center) {
-		mesh.vertices = [..
+		/// <summary>
+		/// Rotates a <see cref="Mesh"/>'s vertices about <paramref name="center"/>.
+		/// </summary>
+		internal void RotateVertices(Quaternion rotation, Vector3 center) {
+			mesh.vertices = [..
 			mesh.vertices.Select(v => rotation * (v - center) + center)
-		];
-		mesh.RecalculateNormals();
-		mesh.RecalculateBounds();
+			];
+			mesh.RecalculateNormals();
+			mesh.RecalculateBounds();
+		}
 	}
 
 }

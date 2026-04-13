@@ -1,5 +1,6 @@
 ﻿using EdgeDetection.Components;
 using GlobalEnums;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -30,17 +31,15 @@ internal static class ObjectModifications {
 			if (!GameManager.SilentInstance || GameManager.instance.IsNonGameplayScene())
 				yield break;
 
-			// some objects don't have their colliders/particle renderers on scene load
+			// some objects don't have their colliders/renderers immediately
 			for (int i = 0; i < 2; i++)
-				yield return new WaitFrameAndPaused();
+				yield return null;
 			if (!scene.isLoaded)
 				yield break;
 
-			foreach (GameObject root in scene.GetRootGameObjects()) {
-				ShowColliderHideParticles(root);
-				foreach (Transform t in Utils.Descendants(root))
+			foreach (GameObject root in scene.GetRootGameObjects())
+				foreach(Transform t in Utils.SelfAndDescendants(root))
 					ShowColliderHideParticles(t.gameObject);
-			}
 		}
 	}
 
@@ -50,8 +49,7 @@ internal static class ObjectModifications {
 	)]
 	[HarmonyPostfix]
 	static void OnObjectSpawned(GameObject __result) {
-		ShowColliderHideParticles(__result);
-		foreach (Transform t in Utils.Descendants(__result))
+		foreach (Transform t in Utils.SelfAndDescendants(__result))
 			ShowColliderHideParticles(t.gameObject);
 	}
 
@@ -61,10 +59,15 @@ internal static class ObjectModifications {
 		__instance.transform.Find("HeroLight").gameObject
 			.AddComponent<HideFromCamera>().hideFromEdgeDetectors = true;
 
-		foreach(Transform t in Utils.Descendants(__instance.gameObject))
-			ShowColliderHideParticles(t.gameObject);
-	}
+		ObjectMods hornetMods = Utils.ReadJsonAsset<ObjectMods>("hornet_modifications.json");
 
+		foreach (Transform t in Utils.Descendants(__instance.gameObject)) {
+			ShowColliderHideParticles(t.gameObject);
+			ApplyObjectMods(t.gameObject, hornetMods);
+		}
+
+		hornetMods.Clear();
+	}
 
 	static void ShowColliderHideParticles(GameObject go) {
 		PhysLayers
@@ -74,7 +77,6 @@ internal static class ObjectModifications {
 			hasRenderer = go.GetComponent<Renderer>(),
 			onColliderLayer = colliderLayers.Contains(layer);
 
-		// some particle systems are present on scene load, not spawned later
 		if (go.GetComponent<ParticleSystemRenderer>())
 			go.AddComponentIfNotPresent<HideFromCamera>().hideFromEdgeDetectors = true;
 
@@ -85,20 +87,33 @@ internal static class ObjectModifications {
 		// sometimes lever sprites aren't on the right layer
 		else if (!hasCollider && hasRenderer && !onColliderLayer && IsPartOfLever(go))
 			go.layer = (int)PhysLayers.INTERACTIVE_OBJECT;
-	}
-
-	static bool IsPartOfLever(GameObject go) {
-		if (go.GetComponent<Lever>())
-			return true;
-
-		bool flag = false;
-		while (!flag && go.transform.parent) {
-			go = go.transform.parent.gameObject;
-			flag = go.GetComponent<Lever>();
+		
+		static bool IsPartOfLever(GameObject go) {
+			if (go.GetComponent<Lever>()) return true;
+			while (go.transform.parent) {
+				go = go.transform.parent.gameObject;
+				if (go.GetComponent<Lever>()) return true;
+			}
+			return false;
 		}
-		return flag;
 	}
 
+	static void ApplyObjectMods(GameObject go, ObjectMods mods) {
+		string name = go.name.Split('(')[0].Trim();
+		
+		if (mods.HideRenderer.Contains(name))
+			go.layer = (int)PhysLayers.DEFAULT;
+
+		else if (mods.HideCollider.Contains(name) && go.GetComponent<Collider2D>())
+			go.AddComponent<RemoveColliderVisualizer>();
+
+		else if (mods.HideSubColliders.TryGetValue(name, out var layer)) {
+			go.layer = (int)layer;
+			foreach (Transform t in Utils.Descendants(go))
+				t.gameObject.AddComponent<RemoveColliderVisualizer>();
+		}
+	}
+	
 	static readonly HashSet<PhysLayers> colliderLayers = [
 		PhysLayers.TERRAIN,
 		PhysLayers.SOFT_TERRAIN,
@@ -109,5 +124,28 @@ internal static class ObjectModifications {
 		PhysLayers.HERO_ATTACK,
 		PhysLayers.PROJECTILES,
 	];
+
+	/// <summary>
+	/// Deserialization struct for specifying which GameObjects should receive one of
+	/// a set of simple modifications intended to make edge detection look better.
+	/// </summary>
+	/// <param name="HideRenderer">Objects which will have their layer set to DEFAULT.</param>
+	/// <param name="HideCollider">Objects which will not have their collider visualized.</param>
+	/// <param name="HideSubColliders">
+	///		Key = object whose descendants won't have collider visualization,
+	///		value = layer to set the object to.
+	///	</param>
+	[Serializable]
+	record struct ObjectMods(
+		HashSet<string> HideRenderer,
+		HashSet<string> HideCollider,
+		Dictionary<string, PhysLayers> HideSubColliders
+	) {
+		public readonly void Clear() {
+			HideRenderer.Clear();
+			HideCollider.Clear();
+			HideSubColliders.Clear();
+		}
+	};
 
 }

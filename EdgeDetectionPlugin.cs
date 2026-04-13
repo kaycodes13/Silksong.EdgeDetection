@@ -63,17 +63,15 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 		Plugin = this;
 		Log = Logger;
 
-		string path = $"{nameof(EdgeDetection)}.Assets";
-
 		// Find shaders
-		Utils.ReadResource($"{path}.shaders.bundle", stream => {
+		Utils.ReadAsset($"shaders.bundle", stream => {
 			AssetBundle bundle = AssetBundle.LoadFromStream(stream);
 			SilhouetteShader = bundle.LoadAsset<Shader>("assets/drawsilhouette.shader");
 			EdgeDetectionShader = bundle.LoadAsset<Shader>("assets/edgedetection.shader");
 		});
 
 		// Find passes & bind config for them
-		PassDefs = Utils.ReadJson<PassDef[]>($"{path}.pass_definitions.json");
+		PassDefs = Utils.ReadJsonAsset<PassDef[]>($"pass_definitions.json");
 		int i = 0;
 		foreach(var pass in PassDefs) {
 			PassDefs[i++] = pass with {
