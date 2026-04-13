@@ -12,7 +12,8 @@ namespace EdgeDetection.Components;
 /// Should be targeted to specific layers.
 /// </summary>
 [RequireComponent(typeof(Camera))]
-public class EdgeDetectionPass : MonoBehaviour {
+[RequireComponent(typeof(CameraShakeManager))]
+public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 
 	#region API
 
@@ -70,9 +71,9 @@ public class EdgeDetectionPass : MonoBehaviour {
 	internal string Id { get; set; } = "";
 
 	/// <summary>
-	/// List of all existing passes.
+	/// Collection of all existing passes.
 	/// </summary>
-	internal static readonly List<EdgeDetectionPass> Passes = [];
+	internal static readonly HashSet<EdgeDetectionPass> Passes = [];
 
 	/// <summary>Minimum outline width.</summary>
 	internal const byte WIDTH_MIN = 0;
@@ -81,6 +82,7 @@ public class EdgeDetectionPass : MonoBehaviour {
 
 	Material silhouetteMaterial, edgeDetectionMaterial;
 	Camera mainCam, detectorCam;
+	CameraShakeManager mainShaker, detectorShaker;
 	RenderTexture camTarget;
 
 	static readonly int
@@ -93,15 +95,17 @@ public class EdgeDetectionPass : MonoBehaviour {
 		Passes.Add(this);
 		mainCam = GetComponent<Camera>();
 
-		detectorCam = new GameObject($"{Id} Edge Detection Camera").AddComponent<Camera>();
-		DontDestroyOnLoad(detectorCam);
-		detectorCam.enabled = false;
-		detectorCam.gameObject.AddComponent<EdgeDetector>().Settings = this;
+		GameObject camGo = new($"{Id} Edge Detection Camera");
+		camGo.transform.SetParentReset(transform);
 
-		transform.GetComponent<CameraShakeManager>()
-			.cameraTypeReference.Register(
-				detectorCam.gameObject.AddComponent<CameraShakeManager>()
-			);
+		detectorCam = camGo.AddComponentIfNotPresent<Camera>();
+		detectorCam.enabled = false;
+
+		mainShaker = GetComponent<CameraShakeManager>();
+		detectorShaker = camGo.AddComponentIfNotPresent<CameraShakeManager>();
+		mainShaker.CopyTo(camGo);
+
+		camGo.AddComponent<EdgeDetector>().Settings = this;
 
 		silhouetteMaterial = new Material(SilhouetteShader);
 		edgeDetectionMaterial = new Material(EdgeDetectionShader);
@@ -140,8 +144,12 @@ public class EdgeDetectionPass : MonoBehaviour {
 		detectorCam.backgroundColor = Color.clear;
 		detectorCam.cullingMask = layerMask;
 
-		// From IsOnHeroPlane
+		// probably not necessary, but I do NOT want camera shakes to ever stop being detected.
+		if (detectorShaker.cameraTypeReference != mainShaker.cameraTypeReference)
+			mainShaker.CopyTo(detectorCam.gameObject);
+
 		if (HeroController.instance) {
+			// figure the definition IsOnHeroPlane uses will work for our clip planes
 			float z = HeroController.instance.transform.position.z - detectorCam.transform.position.z;
 			detectorCam.farClipPlane = z + 1.8f;
 			detectorCam.nearClipPlane = z - 1.8f;
@@ -163,32 +171,22 @@ public class EdgeDetectionPass : MonoBehaviour {
 		if (DebugOutput) SaveToFile("0_orig", camTarget);
 #endif
 
-		// Create temporary textures, make sure they're empty
-		RenderTexture
-			temp1 = RenderTexture.GetTemporary(width, height, 32, RenderTextureFormat.ARGB32),
-			temp2 = RenderTexture.GetTemporary(width, height, 32, RenderTextureFormat.ARGB32);
-
-		RenderTexture prev = RenderTexture.active;
-		RenderTexture.active = temp1;
-		GL.Clear(true, true, Color.clear);
-		RenderTexture.active = temp2;
-		GL.Clear(true, true, Color.clear);
-		RenderTexture.active = prev;
+		RenderTexture[] temp = GetEmptyTemporaryTextures(count: 2, width, height);
 
 		// Render silhouette mask
 		silhouetteMaterial.SetFloat(thresholdID, AlphaThreshold);
-		Graphics.Blit(camTarget, temp1, silhouetteMaterial);
+		Graphics.Blit(camTarget, temp[0], silhouetteMaterial);
 #if DEBUG
-		if (DebugOutput) SaveToFile("1_mask", temp1);
+		if (DebugOutput) SaveToFile("1_mask", temp[0]);
 #endif
 
 		// Accumulate edge detection up to the width parameter
 		edgeDetectionMaterial.SetInteger(finalID, 0);
 		for (int i = 0; i < LineWidth; i++) {
-			Graphics.Blit(temp1, temp2, edgeDetectionMaterial);
-			(temp1, temp2) = (temp2, temp1);
+			Graphics.Blit(temp[0], temp[1], edgeDetectionMaterial);
+			(temp[0], temp[1]) = (temp[1], temp[0]);
 #if DEBUG
-			if (DebugOutput) SaveToFile($"2_edge_{i:00}", temp1);
+			if (DebugOutput) SaveToFile($"2_edge_{i:00}", temp[0]);
 #endif
 		}
 
@@ -196,19 +194,33 @@ public class EdgeDetectionPass : MonoBehaviour {
 		edgeDetectionMaterial.SetInteger(finalID, 1);
 		edgeDetectionMaterial.SetColor(lineColorID, LineColor);
 		edgeDetectionMaterial.SetTexture(sceneTexID, source);
-		Graphics.Blit(temp1, destination, edgeDetectionMaterial);
+		Graphics.Blit(temp[0], destination, edgeDetectionMaterial);
 #if DEBUG
 		if (DebugOutput) SaveToFile($"3_dest", destination);
 #endif
 
 		// Free memory
-		RenderTexture.ReleaseTemporary(temp1);
-		RenderTexture.ReleaseTemporary(temp2);
+		for (int i = 0; i < temp.Length; i++)
+			RenderTexture.ReleaseTemporary(temp[i]);
 #if DEBUG
 		DebugOutput = false;
 #endif
 	}
 
+	static RenderTexture[] GetEmptyTemporaryTextures(int count, int width, int height) {
+		RenderTexture[] texs = new RenderTexture[count];
+		RenderTexture prev = RenderTexture.active;
+		for (int i = 0; i < count; i++) {
+			texs[i] = RenderTexture.GetTemporary(width, height, 32, RenderTextureFormat.ARGB32);
+			RenderTexture.active = texs[i];
+			GL.Clear(true, true, Color.clear);
+		}
+		RenderTexture.active = prev;
+		return texs;
+	}
+
+	public int CompareTo(EdgeDetectionPass other)
+		=> Id.CompareTo(other.Id);
 
 #if DEBUG
 	public bool DebugOutput { get; set; } = false;
