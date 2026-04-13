@@ -42,7 +42,7 @@ internal class VisualizeCollider : MonoBehaviour {
 
 		// If a collider damages, I don't care what layer it's actually on,
 		// edge-detect it in the same style as everything else that's hazardous.
-		if (transform.GetComponent<DamageEnemies>() || transform.GetComponent<DamageHero>())
+		if (transform.GetComponent<DamageHero>())
 			visT.gameObject.layer = (int)PhysLayers.ENEMIES;
 
 		visGo.AddComponent<MeshFilter>().mesh = mesh;
