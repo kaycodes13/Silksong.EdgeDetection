@@ -13,7 +13,7 @@ internal class RemoveColliderVisualizer : MonoBehaviour {
 
 	void TryRemove() {
 		tries++;
-		if (TryGetComponent<VisualizeCollider>(out var vis)) {
+		if (TryGetComponent<ColliderVisualizer>(out var vis)) {
 			Destroy(vis);
 			Destroy(this);
 		}

@@ -1,5 +1,9 @@
 {
   "HideRenderer": [
+    "HeroLight",
+    "Dust",
+    "Dust BG",
+    "white_light_donut",
     "Sphere Flash",
     "Parry Stance Flash",
     "Parry Clash Effect",

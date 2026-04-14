@@ -3,6 +3,7 @@ using GlobalEnums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine.SceneManagement;
 
 namespace EdgeDetection.Patches;
@@ -38,10 +39,12 @@ internal static class ObjectModifications {
 				yield break;
 
 			foreach (GameObject root in scene.GetRootGameObjects())
-				foreach (Transform t in Utils.SelfAndDescendants(root)) {
-					ShowColliderHideParticles(t.gameObject);
-					ApplyObjectMods(t.gameObject, genericMods);
-				}
+			foreach (Transform t in Utils.SelfAndDescendants(root)) {
+				if (ObjectVisualizer.IsVisualizer(t))
+					continue;
+				ShowColliderHideParticles(t.gameObject);
+				ApplyObjectMods(t.gameObject, genericMods);
+			}
 		}
 	}
 
@@ -60,16 +63,11 @@ internal static class ObjectModifications {
 	[HarmonyPatch(typeof(HeroController), "Awake")]
 	[HarmonyPostfix]
 	static void OnHeroAwake(HeroController __instance) {
-		__instance.transform.Find("HeroLight").gameObject
-			.AddComponent<HideFromCamera>().hideFromEdgeDetectors = true;
-
 		ObjectMods hornetMods = Utils.ReadJsonAsset<ObjectMods>("hornet_modifications.json");
-
 		foreach (Transform t in Utils.Descendants(__instance.gameObject)) {
 			ShowColliderHideParticles(t.gameObject);
 			ApplyObjectMods(t.gameObject, hornetMods);
 		}
-
 		hornetMods.Clear();
 	}
 
@@ -86,7 +84,7 @@ internal static class ObjectModifications {
 
 		// terrain/etc hitboxes we need to see
 		else if (hasCollider && !hasRenderer && onColliderLayer)
-			go.AddComponentIfNotPresent<VisualizeCollider>();
+			go.AddComponentIfNotPresent<ColliderVisualizer>();
 
 		// sometimes lever sprites aren't on the right layer
 		else if (!hasCollider && hasRenderer && !onColliderLayer && IsPartOfLever(go))
@@ -102,8 +100,10 @@ internal static class ObjectModifications {
 		}
 	}
 
+	const string REGEX_UNITYCLONE = @"\s?\([a-zA-Z0-9]+\)";
+
 	static void ApplyObjectMods(GameObject go, ObjectMods mods) {
-		string name = go.name.Split('(')[0].Trim();
+		string name = Regex.Replace(go.name, REGEX_UNITYCLONE, "").Trim();
 
 		if (mods.HideRenderer.Contains(name))
 			go.layer = (int)PhysLayers.DEFAULT;
@@ -118,7 +118,7 @@ internal static class ObjectModifications {
 		}
 
 		else if (mods.DupeSprite.TryGetValue(name, out var dupeLayer))
-			go.AddComponentIfNotPresent<ReLayerSprite>().layer = dupeLayer;
+			go.AddComponentIfNotPresent<SpriteVisualizer>().layer = dupeLayer;
 
 		else if (mods.HideSubColliders.TryGetValue(name, out var layer)) {
 			go.layer = (int)layer;
