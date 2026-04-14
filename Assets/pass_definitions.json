@@ -20,8 +20,7 @@
 			"ENEMIES",
 			"ENEMY_ATTACK",
 			"HERO_ATTACK",
-			"PROJECTILES",
-			"TERRAIN_DETECTOR"
+			"PROJECTILES"
 		],
 		"Threshold": 0.4
 	},

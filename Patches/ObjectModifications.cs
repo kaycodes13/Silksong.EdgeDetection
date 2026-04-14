@@ -38,8 +38,10 @@ internal static class ObjectModifications {
 				yield break;
 
 			foreach (GameObject root in scene.GetRootGameObjects())
-				foreach(Transform t in Utils.SelfAndDescendants(root))
+				foreach (Transform t in Utils.SelfAndDescendants(root)) {
 					ShowColliderHideParticles(t.gameObject);
+					ApplyObjectMods(t.gameObject, genericMods);
+				}
 		}
 	}
 
@@ -49,8 +51,10 @@ internal static class ObjectModifications {
 	)]
 	[HarmonyPostfix]
 	static void OnObjectSpawned(GameObject __result) {
-		foreach (Transform t in Utils.SelfAndDescendants(__result))
+		foreach (Transform t in Utils.SelfAndDescendants(__result)) {
 			ShowColliderHideParticles(t.gameObject);
+			ApplyObjectMods(t.gameObject, genericMods);
+		}
 	}
 
 	[HarmonyPatch(typeof(HeroController), "Awake")]
@@ -100,12 +104,21 @@ internal static class ObjectModifications {
 
 	static void ApplyObjectMods(GameObject go, ObjectMods mods) {
 		string name = go.name.Split('(')[0].Trim();
-		
+
 		if (mods.HideRenderer.Contains(name))
 			go.layer = (int)PhysLayers.DEFAULT;
 
 		else if (mods.HideCollider.Contains(name) && go.GetComponent<Collider2D>())
 			go.AddComponent<RemoveColliderVisualizer>();
+
+		else if (mods.ChangeLayers.TryGetValue(name, out var changeLayer)) {
+			foreach (Transform t in Utils.SelfAndDescendants(go))
+				if (t.GetComponent<Renderer>())
+					t.gameObject.layer = (int)changeLayer;
+		}
+
+		else if (mods.DupeSprite.TryGetValue(name, out var dupeLayer))
+			go.AddComponentIfNotPresent<ReLayerSprite>().layer = dupeLayer;
 
 		else if (mods.HideSubColliders.TryGetValue(name, out var layer)) {
 			go.layer = (int)layer;
@@ -125,12 +138,18 @@ internal static class ObjectModifications {
 		PhysLayers.PROJECTILES,
 	];
 
+	static readonly ObjectMods genericMods = Utils.ReadJsonAsset<ObjectMods>("generic_modifications.json");
+
 	/// <summary>
 	/// Deserialization struct for specifying which GameObjects should receive one of
 	/// a set of simple modifications intended to make edge detection look better.
 	/// </summary>
 	/// <param name="HideRenderer">Objects which will have their layer set to DEFAULT.</param>
 	/// <param name="HideCollider">Objects which will not have their collider visualized.</param>
+	/// <param name="DupeSprite">
+	///		Key = object to have its sprite invisibly duped,
+	///		value = layer to put the dupe on
+	/// </param>
 	/// <param name="HideSubColliders">
 	///		Key = object whose descendants won't have collider visualization,
 	///		value = layer to set the object to.
@@ -139,11 +158,15 @@ internal static class ObjectModifications {
 	record struct ObjectMods(
 		HashSet<string> HideRenderer,
 		HashSet<string> HideCollider,
+		Dictionary<string, PhysLayers> ChangeLayers,
+		Dictionary<string, PhysLayers> DupeSprite,
 		Dictionary<string, PhysLayers> HideSubColliders
 	) {
 		public readonly void Clear() {
 			HideRenderer.Clear();
 			HideCollider.Clear();
+			ChangeLayers.Clear();
+			DupeSprite.Clear();
 			HideSubColliders.Clear();
 		}
 	};

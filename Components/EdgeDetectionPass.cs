@@ -222,6 +222,9 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 	public int CompareTo(EdgeDetectionPass other)
 		=> Id.CompareTo(other.Id);
 
+	public override int GetHashCode()
+		=> Id.GetHashCode();
+
 #if DEBUG
 	public bool DebugOutput { get; set; } = false;
 

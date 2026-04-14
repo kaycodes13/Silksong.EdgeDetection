@@ -28,6 +28,8 @@
     "Harpoon Breaker Extend",
     "Harpoon Dash Damager"
   ],
+  "ChangeLayers": {},
+  "DupeSprite": {},
   "HideSubColliders": {
     "Super Jump Needle Throw": "HERO_ATTACK",
     "Charge Slash Basic": "HERO_ATTACK",

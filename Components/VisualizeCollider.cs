@@ -37,8 +37,7 @@ internal class VisualizeCollider : MonoBehaviour {
 
 		visGo = new GameObject($"{gameObject.name} Hitbox") { layer = gameObject.layer };
 		visT = visGo.transform;
-		visT.SetParent(visParent);
-		visT.Reset();
+		visT.SetParentReset(visParent);
 
 		// If a collider damages, I don't care what layer it's actually on,
 		// edge-detect it in the same style as everything else that's hazardous.
