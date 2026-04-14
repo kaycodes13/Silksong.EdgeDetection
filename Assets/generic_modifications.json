@@ -3,19 +3,14 @@
     "black_fader",
     "black_fader_moon",
     "Impact Effect",
-    "temp fog"
+    "temp fog",
+    "haze2"
   ],
   "ChangeAllLayers": {
-    "Map Machine": "INTERACTIVE_OBJECT",
-    "Bellway Toll Machine": "INTERACTIVE_OBJECT",
-    "bell_bench_appear": "INTERACTIVE_OBJECT",
-    "pneumatic_tube_set": "INTERACTIVE_OBJECT",
     "Hornet": "PLAYER",
     "Splinter Queen Gate Spike": "ENEMY_ATTACK"
   },
   "VisualizeSprite": {
-    "toll_machine": "INTERACTIVE_OBJECT",
-    "RestBench": "INTERACTIVE_OBJECT",
     "Curve Claw": "HERO_ATTACK",
     "Curve Claw Upgraded": "HERO_ATTACK"
   }

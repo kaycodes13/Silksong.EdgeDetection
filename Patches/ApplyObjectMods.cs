@@ -84,10 +84,9 @@ internal static class ApplyObjectMods {
 	static readonly ObjectMods genericMods = Utils.ReadJsonAsset<ObjectMods>("generic_modifications.json");
 	
 	static readonly HashSet<PhysLayers> colliderLayers = [
-		PhysLayers.TERRAIN,
-		PhysLayers.SOFT_TERRAIN,
-		PhysLayers.INTERACTIVE_OBJECT,
-		PhysLayers.BOUNCER,
+		//PhysLayers.TERRAIN,
+		//PhysLayers.SOFT_TERRAIN,
+		//PhysLayers.INTERACTIVE_OBJECT,
 		PhysLayers.DAMAGE_ALL,
 		PhysLayers.ENEMY_ATTACK,
 		PhysLayers.HERO_ATTACK,
@@ -112,8 +111,8 @@ internal static class ApplyObjectMods {
 						t2.gameObject.layer = (int)PhysLayers.INTERACTIVE_OBJECT;
 			}
 		}
-		// terrain/etc hitboxes we need to see
-		else if (!renderer && colliderLayers.Contains(layer))
+		// hazard/etc hitboxes we need to see
+		else if (!renderer && (go.GetComponent<DamageHero>() || colliderLayers.Contains(layer)))
 			go.AddComponentIfNotPresent<ColliderVisualizer>();
 	}
 

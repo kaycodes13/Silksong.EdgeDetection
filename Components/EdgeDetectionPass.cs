@@ -60,7 +60,23 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 	public float AlphaThreshold {
 		get => field;
 		set => field = Mathf.Clamp01(value);
-	}
+	} = 0.4f;
+
+	/// <summary>
+	/// How far behind Hornet the detector camera's clipping plane will reach.
+	/// </summary>
+	public float ClipFar {
+		get => field;
+		set => field = Mathf.Max(0, value);
+	} = 1.8f;
+
+	/// <summary>
+	/// How far in front of Hornet the detector camera's clipping plane will reach.
+	/// </summary>
+	public float ClipNear {
+		get => field;
+		set => field = Mathf.Max(0, value);
+	} = 1.8f;
 
 	#endregion
 
@@ -68,7 +84,7 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 	/// Internal ID for the pass.
 	/// Used in localizing its menu options and naming its camera.
 	/// </summary>
-	internal string Id { get; set; } = "";
+	public string Id { get; set; } = "";
 
 	/// <summary>
 	/// Collection of all existing passes.
@@ -149,10 +165,12 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 			mainShaker.CopyTo(detectorCam.gameObject);
 
 		if (HeroController.instance) {
-			// figure the definition IsOnHeroPlane uses will work for our clip planes
 			float z = HeroController.instance.transform.position.z - detectorCam.transform.position.z;
-			detectorCam.farClipPlane = z + 1.8f;
-			detectorCam.nearClipPlane = z - 1.8f;
+			detectorCam.farClipPlane = z + ClipFar;
+			detectorCam.nearClipPlane = z - ClipNear;
+		} else {
+			detectorCam.farClipPlane = 42;
+			detectorCam.nearClipPlane = 38;
 		}
 
 		// Grab the scene
