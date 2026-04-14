@@ -39,12 +39,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets/**/*" />
     <Folder Remove="thunderstore/temp;thunderstore/dist" />
+    <None Remove="preview.png"/>
+    <EmbeddedResource Include="Assets/**/*" />
     <Compile Remove="Shaders\*" />
     <None Include="Shaders\*" />
     <None Include="README.md" Pack="True" PackagePath="README.md" />
-    <None Include="preview.png" Pack="True" PackagePath="preview.png"/>
     <None Include="thunderstore/icon.png" Pack="True" PackagePath="icon.png" />
   </ItemGroup>
 
