@@ -2,7 +2,7 @@
 
 An accessibility mod for Hollow Knight: Silksong that adds customizable edge detection to things that are important for gameplay.
 
-[!Screenshot of Moss Grotto with edge detection on the terrain, Hornet, and one Mossmir](./preview.png)
+![Screenshot of Moss Grotto with edge detection on the terrain, Hornet, and one Mossmir](./preview.png)
 
 Each layer can have its line thickness and colour changed individually.
 
