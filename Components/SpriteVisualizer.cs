@@ -30,12 +30,8 @@ internal class SpriteVisualizer : ObjectVisualizer {
 			dupeTk2d = dupe.AddComponent<tk2dSprite>();
 		}
 
-		if (sprite || tk2d) {
+		if (sprite || tk2d)
 			dupe.AddComponent<HideFromCamera>().hideFromMain = true;
-
-			foreach (Transform t in Utils.SelfAndDescendants(gameObject))
-				t.gameObject.AddComponent<RemoveColliderVisualizer>();
-		}
 	}
 
 	protected override void UpdateDupe() {

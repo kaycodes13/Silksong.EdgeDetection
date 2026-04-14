@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using UObject = UnityEngine.Object;
 
 namespace EdgeDetection;
 
@@ -12,6 +11,7 @@ namespace EdgeDetection;
 /// Miscellaneous utility functions and extensions.
 /// </summary>
 internal static class Utils {
+	#region Assets
 
 	/// <summary>
 	/// Static reference to this assembly.
@@ -39,27 +39,44 @@ internal static class Utils {
 		return value;
 	}
 
+	#endregion
+
+	#region Iterators
+
 	/// <summary>
-	/// Enumerates a GameObject and all its descendants.
+	/// Enumerates the Transforms of all GameObjects in <paramref name="roots"/>
+	/// and all their descendants.
 	/// </summary>
-	internal static IEnumerable<Transform> SelfAndDescendants(GameObject go) {
+	internal static IEnumerable<Transform> WalkHierarchy(IEnumerable<GameObject> roots) {
+		foreach (Transform t in roots.SelectMany(x => SelfAndWalkHierarchy(x)))
+			yield return t;
+	}
+
+	/// <summary>
+	/// Enumerates the Transforms of a GameObject and all its descendants.
+	/// </summary>
+	internal static IEnumerable<Transform> SelfAndWalkHierarchy(GameObject go) {
 		yield return go.transform;
-		foreach (Transform descendant in Descendants(go))
+		foreach (Transform descendant in WalkHierarchy(go))
 			yield return descendant;
 	}
 
 	/// <summary>
-	/// Enumerates all the descendants of a GameObject.
+	/// Enumerates the Transforms of all the descendants of a GameObject.
 	/// </summary>
-	internal static IEnumerable<Transform> Descendants(GameObject go) {
+	internal static IEnumerable<Transform> WalkHierarchy(GameObject go) {
 		foreach (Transform t in go.transform) {
 			yield return t;
-			foreach (Transform descendant in Descendants(t.gameObject))
+			foreach (Transform descendant in WalkHierarchy(t.gameObject))
 				yield return descendant;
 		}
 	}
 
-	extension (Mesh mesh) {
+	#endregion
+
+	#region Extensions
+
+	extension(Mesh mesh) {
 		/// <summary>
 		/// Rotates a <see cref="Mesh"/>'s vertices about <see cref="Vector3.zero"/>.
 		/// </summary>
@@ -71,12 +88,13 @@ internal static class Utils {
 		/// </summary>
 		internal void RotateVertices(Quaternion rotation, Vector3 center) {
 			mesh.vertices = [..
-			mesh.vertices.Select(v => rotation * (v - center) + center)
+				mesh.vertices.Select(v => rotation * (v - center) + center)
 			];
 			mesh.RecalculateNormals();
 			mesh.RecalculateBounds();
 		}
 	}
 
+	#endregion
 }
 

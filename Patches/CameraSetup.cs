@@ -1,6 +1,5 @@
 ﻿using BepInEx.Configuration;
 using EdgeDetection.Components;
-using GlobalEnums;
 using System;
 
 namespace EdgeDetection.Patches;
@@ -26,11 +25,5 @@ internal static class CameraSetup {
 
 		static T GetValue<T>(EventArgs e)
 			=> (T)((SettingChangedEventArgs)e).ChangedSetting.BoxedValue;
-
-		GameObject sokSceneParticles =
-			__instance.sceneParticles.transform.Find("blown_sand_particles").gameObject;
-
-		foreach (Transform t in Utils.Descendants(sokSceneParticles))
-			t.gameObject.layer = (int)PhysLayers.DEFAULT;
 	}
 }

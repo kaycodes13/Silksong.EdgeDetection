@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using EdgeDetection.Components;
 using EdgeDetection.Menu;
+using EdgeDetection.Structs;
 using GlobalEnums;
 using Silksong.ModMenu.Elements;
 using Silksong.ModMenu.Plugin;
@@ -45,17 +46,6 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 	/// Definitions for all edge detection passes which should be performed, in order.
 	/// </summary>
 	internal static PassDef[] PassDefs { get; private set; }
-
-	/// <summary>
-	/// Deserialization struct which describes an <see cref="EdgeDetectionPass"/>.
-	/// </summary>
-	internal record struct PassDef(
-		string Id,
-		Color Colour,
-		byte Width,
-		bool HalfRes,
-		PhysLayers[] Layers,
-		float Threshold);
 
 	private static Harmony Harmony { get; } = new(Id);
 

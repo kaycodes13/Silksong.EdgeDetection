@@ -1,9 +1,5 @@
 {
-  "HideRenderer": [
-    "HeroLight",
-    "Dust",
-    "Dust BG",
-    "white_light_donut",
+  "HideViaLayer": [
     "Sphere Flash",
     "Parry Stance Flash",
     "Parry Clash Effect",
@@ -25,6 +21,10 @@
     "Heal Anim",
     "Bind Silk"
   ],
+  "ChangeAllLayers": {
+    "Vignette": "PARTICLE",
+    "HeroLight": "PARTICLE"
+  },
   "HideCollider": [
     "Super Jump Damager",
     "Taunt Slash",
@@ -32,9 +32,7 @@
     "Harpoon Breaker Extend",
     "Harpoon Dash Damager"
   ],
-  "ChangeLayers": {},
-  "DupeSprite": {},
-  "HideSubColliders": {
+  "ChangeLayer": {
     "Super Jump Needle Throw": "HERO_ATTACK",
     "Charge Slash Basic": "HERO_ATTACK",
     "Charge Slash Scythe": "HERO_ATTACK",
@@ -43,5 +41,15 @@
     "Charge Slash Witch": "HERO_ATTACK",
     "Charge Slash Toolmaster": "HERO_ATTACK",
     "Charge Slash Shaman": "HERO_ATTACK"
-  }
+  },
+  "HideSubColliders": [
+    "Super Jump Needle Throw",
+    "Charge Slash Basic",
+    "Charge Slash Scythe",
+    "Charge Slash Warrior",
+    "Charge Slash Warrior Rage",
+    "Charge Slash Witch",
+    "Charge Slash Toolmaster",
+    "Charge Slash Shaman"
+  ]
 }

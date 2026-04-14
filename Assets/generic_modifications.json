@@ -1,12 +1,11 @@
 {
-  "HideRenderer": [
+  "HideViaLayer": [
     "black_fader",
     "black_fader_moon",
     "Impact Effect",
     "temp fog"
   ],
-  "HideCollider": [],
-  "ChangeLayers": {
+  "ChangeAllLayers": {
     "Map Machine": "INTERACTIVE_OBJECT",
     "Bellway Toll Machine": "INTERACTIVE_OBJECT",
     "bell_bench_appear": "INTERACTIVE_OBJECT",
@@ -14,11 +13,10 @@
     "Hornet": "PLAYER",
     "Splinter Queen Gate Spike": "ENEMY_ATTACK"
   },
-  "DupeSprite": {
+  "VisualizeSprite": {
     "toll_machine": "INTERACTIVE_OBJECT",
     "RestBench": "INTERACTIVE_OBJECT",
     "Curve Claw": "HERO_ATTACK",
     "Curve Claw Upgraded": "HERO_ATTACK"
-  },
-  "HideSubColliders": {}
+  }
 }
