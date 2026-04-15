@@ -81,7 +81,10 @@ internal static class ApplyObjectMods {
 
 	#region Utils
 
-	static readonly ObjectMods genericMods = Utils.ReadJsonAsset<ObjectMods>("generic_modifications.json");
+	static readonly ObjectMods genericMods = ObjectMods.Union(
+		Utils.ReadJsonAsset<ObjectMods>("generic_modifications.json"),
+		Utils.ReadJsonAsset<ObjectMods>("boss_modifications.json")
+	);
 	
 	static readonly HashSet<PhysLayers> colliderLayers = [
 		//PhysLayers.TERRAIN,

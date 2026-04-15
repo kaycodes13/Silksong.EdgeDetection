@@ -2,6 +2,7 @@
 using GlobalEnums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace EdgeDetection.Structs;
@@ -46,13 +47,11 @@ record struct ObjectMods(
 	public const PhysLayers HIDE_LAYER = PhysLayers.PARTICLE;
 	public const int HIDE_LAYER_INT = (int)HIDE_LAYER;
 
+
 	public readonly void Apply(Transform t) => Apply(t.gameObject);
 
 	public readonly void Apply(GameObject go) {
 		string name = CleanName(go);
-
-		if (HideViaLayer?.Contains(name) ?? false)
-			go.layer = HIDE_LAYER_INT;
 
 		if (ChangeLayer?.TryGetValue(name, out PhysLayers a) ?? false)
 			go.layer = (int)a;
@@ -62,6 +61,9 @@ record struct ObjectMods(
 				if (t.TryGetComponent<Renderer>(out var r) && r is not ParticleSystemRenderer && !t.GetComponent<Collider2D>())
 					t.gameObject.layer = (int)b;
 		}
+
+		if (HideViaLayer?.Contains(name) ?? false)
+			go.layer = HIDE_LAYER_INT;
 
 		if (HideFromDetectors?.Contains(name) ?? false)
 			go.AddComponentIfNotPresent<HideFromCamera>().hideFromEdgeDetectors = true;
@@ -83,5 +85,32 @@ record struct ObjectMods(
 	/// </summary>
 	public static string CleanName(GameObject go)
 		=> Regex.Replace(go.name, @"\s?\([a-zA-Z0-9]+\)", "").Trim();
+
+	/// <summary>
+	/// Returns a new <see cref="ObjectMods"/> containing the union of
+	/// each property of <paramref name="one"/> and <paramref name="two"/>.
+	/// </summary>
+	public static ObjectMods Union(ObjectMods one, ObjectMods two) {
+		return new ObjectMods {
+			HideViaLayer = MergeSet(one.HideViaLayer, two.HideViaLayer),
+			HideFromDetectors = MergeSet(one.HideFromDetectors, two.HideFromDetectors),
+			HideCollider = MergeSet(one.HideCollider, two.HideCollider),
+			HideSubColliders = MergeSet(one.HideSubColliders, two.HideSubColliders),
+
+			ChangeLayer = MergeDict(one.ChangeLayer, two.ChangeLayer),
+			ChangeAllLayers = MergeDict(one.ChangeAllLayers, two.ChangeAllLayers),
+			VisualizeSprite = MergeDict(one.VisualizeSprite, two.VisualizeSprite),
+		};
+
+		static HashSet<T> MergeSet<T>(HashSet<T>? a, HashSet<T>? b)
+			=> [.. (a ?? []).Union(b ?? [])];
+
+		static Dictionary<K,V> MergeDict<K,V>(Dictionary<K,V>? a, Dictionary<K,V>? b) {
+			Dictionary<K,V> res = [];
+			foreach (var (k, v) in a ?? []) res.TryAdd(k, v);
+			foreach (var (k, v) in b ?? []) res.TryAdd(k, v);
+			return res;
+		}
+	}
 
 }

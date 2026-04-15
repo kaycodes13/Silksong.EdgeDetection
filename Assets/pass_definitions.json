@@ -28,7 +28,7 @@
 			"HERO_ATTACK",
 			"PROJECTILES"
 		],
-		"Threshold": 0.4,
+		"Threshold": 0.5,
 		"ClipFar": 1.8,
 		"ClipNear": 1.8,
 		"ExcludePass": "TERRAIN"
@@ -41,7 +41,7 @@
 		"Layers": [
 			"PLAYER"
 		],
-		"Threshold": 0.5,
+		"Threshold": 0.6,
 		"ClipFar": 1.8,
 		"ClipNear": 1.8,
 		"ExcludePass": ""

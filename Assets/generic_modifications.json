@@ -4,44 +4,44 @@
     "black_fader_moon",
     "Impact Effect",
     "temp fog",
-	"dream_fog",
+	  "dream_fog",
+	  "ant_fog",
     "haze2",
-	"Light Vignette",
-	"Black Vignette",
-	"Silk_Hair_Single",
-	"Silk_Hair_Single_Thin"
+	  "Light Vignette",
+    "Black Vignette",
+    "glow",
+    "burst_2D",
+    "burst_2D_back"
   ],
   "ChangeLayer": {
-	"Mite Trap": "ENEMY_ATTACK",
-	"LavaBase": "ENEMY_ATTACK",
-	"LavaTop": "ENEMY_ATTACK"
+	  "Mite Trap": "ENEMY_ATTACK",
+	  "LavaBase": "ENEMY_ATTACK",
+	  "LavaTop": "ENEMY_ATTACK"
   },
   "ChangeAllLayers": {
-	"Fog Planes": "PARTICLE",
+	  "Fog Planes": "PARTICLE",
     "Hornet": "PLAYER",
-    "Splinter Queen Gate Spike": "ENEMY_ATTACK",
-	"Dust Trap Spike Plate": "ENEMY_ATTACK",
-	"Lava_Waterfall Set": "ENEMY_ATTACK",
+	  "Dust Trap Spike Plate": "ENEMY_ATTACK",
+	  "Lava_Waterfall Set": "ENEMY_ATTACK",
+	  "Mask": "PARTICLE"
   },
   "HideCollider": [
     "Crystal Drifter"
   ],
   "VisualizeSprite": {
-	"RestBench": "INTERACTIVE_OBJECT",
+	  "RestBench": "INTERACTIVE_OBJECT",
     "Curve Claw": "HERO_ATTACK",
     "Curve Claw Upgraded": "HERO_ATTACK",
-	"Tendril": "INTERACTIVE_OBJECT"
+	  "Tendril": "INTERACTIVE_OBJECT"
   },
   "HideSubColliders": [
-	"Wraith",
-	"Dust Trap Spike Plate",
-	"Coral Judge",
-	"Driller A",
-	"Driller B",
-	"Crystal Drifter Spikes",
-	"Dustroach",
-	"Roachkeeper",
-	"Roachkeeper - Garmond Target",
-	"Swamp Ductsucker",
+	  "Wraith",
+	  "Dust Trap Spike Plate",
+	  "Coral Judge",
+	  "Crystal Drifter Spikes",
+	  "Dustroach",
+	  "Roachkeeper",
+	  "Roachkeeper - Garmond Target",
+	  "Swamp Ductsucker"
   ]
 }

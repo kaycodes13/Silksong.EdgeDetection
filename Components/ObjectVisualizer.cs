@@ -34,7 +34,7 @@ internal abstract class ObjectVisualizer : MonoBehaviour {
 			dupe.SetActive(true);
 	}
 
-	void LateUpdate() {
+	void Update() {
 		if (!dupe) Start();
 		if (!dupe) return;
 

@@ -6,7 +6,7 @@ An accessibility mod for Hollow Knight: Silksong that adds customizable edge det
 
 Each layer can have its line thickness and colour changed individually. The lines are not affected by the game's brightness or other graphics settings.
 
-Many regular rooms have been tested and the entire game should be playable, but I still refinements to make, especially for bosses. If you find a particular room, object, or boss that looks wrong, please [open an issue on the GitHub repository](https://github.com/kaycodes13/Silksong.EdgeDetection/issues/new).
+Many regular rooms have been tested and the entire game should be playable, but I still have refinements to make, especially for bosses. If you find a particular room, object, or boss that looks wrong, please [open an issue on the GitHub repository](https://github.com/kaycodes13/Silksong.EdgeDetection/issues/new/choose).
 
 *Donation Link: https://ko-fi.com/kaykao*
 
