@@ -94,7 +94,7 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 
 	public AbstractMenuScreen BuildCustomMenu() {
 		VerticalGroup group = new();
-		group.AddRange(EdgeDetectionPass.Passes.SelectMany(GenerateDetectorOptions));
+		group.AddRange(EdgeDetectionPass.Passes.SelectMany(x => GenerateDetectorOptions(x.Value)));
 		return new ScrollMenuScreen(ModMenuName(), group);
 	}
 

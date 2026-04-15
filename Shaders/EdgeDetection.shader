@@ -1,6 +1,6 @@
 // Outline Shader for black/white stencil masks via Laplacian Edge Detection
-// Can be run multiple times to increase outline thickness (expensive if too thick, slightly janky on corners)
-// Set _FinalPass to 1 to composite the accumulated outline to the given _SceneTex in the given _LineColor.
+// First pass can be run multiple times to increase outline thickness (expensive if too thick, slightly janky on corners).
+// Second pass composites the accumulated outline to the given _SceneTex in the given _LineColor.
 
 Shader "kaycodes13/EdgeDetection" {
 	Properties {
@@ -15,11 +15,12 @@ Shader "kaycodes13/EdgeDetection" {
 		// ^ the original scene to composite on top of
 		
 		[PerRendererData]
-		_LineColor ("Color", Color) = (1, 1, 1, 1)
+		[NoScaleOffset]
+		_SubtractTex("Subtract Texture", 2D) = "black"{}
+		// ^ silhouette texture to subtract from the final edge detection
 		
 		[PerRendererData]
-		_FinalPass ("Final Pass", Integer) = 0
-		// ^ toggle for if we're doing edge detecting or sticking the edge onto the scene
+		_LineColor ("Color", Color) = (1, 1, 1, 1)
 	}
 	
 	SubShader {
@@ -29,6 +30,8 @@ Shader "kaycodes13/EdgeDetection" {
 		Tags { "Queue"="Transparent" }
 		
 		Pass {
+			Name "DETECT"
+		
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -44,11 +47,8 @@ Shader "kaycodes13/EdgeDetection" {
 				half2 uv[5] : TEXCOORD0;
 			};
 
-			sampler2D _SceneTex;
 			sampler2D _MainTex;
 			half4 _MainTex_TexelSize; // float4(1/width, 1/height, width, height)
-			float4 _LineColor;
-			int _FinalPass;
 
 			half laplace(v2f i) {
 				const half G[5] = {
@@ -76,24 +76,57 @@ Shader "kaycodes13/EdgeDetection" {
 				return o;
 			}
 
-			float4 frag(v2f i) : SV_Target {
-				float4 stencilCol = tex2D(_MainTex, i.uv[2]);
+			half4 frag(v2f i) : SV_Target {
+				half4 stencilCol = tex2D(_MainTex, i.uv[2]);
 				
-				if (_FinalPass == 1) {
+				if (stencilCol.r > 0 || laplace(i) >= 0.5)
+					return stencilCol;
 				
-					if (stencilCol.r < 0.1 || stencilCol.g > 0.1)
-						return tex2D(_SceneTex, i.uv[2]);
-					else
-						return _LineColor;
-					
-				} else {
+				return half4(1, 0, 0, 1);
+			}
+			ENDCG
+		}
+		
+		Pass {
+			Name "COMPOSITE"
+		
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#include "UnityCG.cginc"
+
+			struct appdata {
+				float4 vertex : POSITION;
+				float2 uv : TEXCOORD0;
+			};
+
+			struct v2f {
+				float4 vertex : SV_POSITION;
+				float2 uv : TEXCOORD0;
+			};
+
+			sampler2D _MainTex;
+			sampler2D _SceneTex;
+			sampler2D _SubtractTex;
+			float4 _LineColor;
+
+			v2f vert(appdata v) {
+				v2f o;
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.uv = v.uv;
+				return o;
+			}
+
+			float4 frag(v2f i) : SV_TARGET {				
+				if (tex2D(_SubtractTex, i.uv).r > 0.1)
+					return tex2D(_SceneTex, i.uv);
+			
+				float4 stencilCol = tex2D(_MainTex, i.uv);
 				
-					if (stencilCol.r > 0 || laplace(i) >= 0.5)
-						return stencilCol;
-					else
-						return float4(1, 0, 0, 1);
+				if (stencilCol.r < 0.1 || stencilCol.g > 0.1)
+					return tex2D(_SceneTex, i.uv);
 				
-				}
+				return _LineColor;
 			}
 			ENDCG
 		}

@@ -16,7 +16,8 @@ internal static class CameraSetup {
 			detector.Layers,
 			detector.AlphaThreshold,
 			detector.ClipFar,
-			detector.ClipNear) = pass;
+			detector.ClipNear,
+			detector.ExcludePass) = pass;
 
 			if (Plugin.GetPassConfig(pass.Id, out var c, out var w, out var h)) {
 				c.SettingChanged += (_, e) => detector.LineColor = GetValue<Color>(e);

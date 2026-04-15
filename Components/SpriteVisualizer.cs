@@ -43,7 +43,8 @@ internal class SpriteVisualizer : ObjectVisualizer {
 			dupeSprite.flipY = sprite.flipY;
 		}
 		else if (tk2d && tk2d.CurrentSprite != dupeTk2d.CurrentSprite) {
-			Destroy(dupeMat);
+			if (dupeMat)
+				Destroy(dupeMat);
 			dupeTk2d.scale = tk2d.scale;
 			dupeTk2d.SetSprite(tk2d.collection, tk2d.spriteId);
 			dupeMesh.material = dupeMat = new Material(dupeMesh.material);

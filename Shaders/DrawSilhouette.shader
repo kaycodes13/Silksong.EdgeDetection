@@ -8,7 +8,7 @@ Shader "kaycodes13/DrawSilhouette" {
 		// ^ isolated render of objects to render in silhouette
 		
 		[PerRendererData]
-		_AlphaThreshold ("Final Pass", Range(0, 1)) = 0.1
+		_AlphaThreshold ("Alpha Threshold", Range(0, 1)) = 0.4
 		// ^ minimum alpha for a pixel to be included in the output
 	}
 	SubShader {
@@ -49,7 +49,8 @@ Shader "kaycodes13/DrawSilhouette" {
 			half4 frag(v2f i) : COLOR0 {
 				if (tex2D(_MainTex, i.uv).a >= _AlphaThreshold)
 					return half4(1,1,1,1);
-				return half4(0,0,0,0);
+				else
+					return half4(0,0,0,0);
 			}
 			ENDCG
 		}

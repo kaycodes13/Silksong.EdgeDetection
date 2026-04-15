@@ -1,9 +1,7 @@
 ﻿using GlobalEnums;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace EdgeDetection.Components;
 
@@ -13,9 +11,26 @@ namespace EdgeDetection.Components;
 /// </summary>
 [RequireComponent(typeof(Camera))]
 [RequireComponent(typeof(CameraShakeManager))]
-public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
+public class EdgeDetectionPass : MonoBehaviour {
 
 	#region API
+
+	/// <summary>
+	/// Internal ID for the pass. Also used in localizing its menu options and naming its camera.
+	/// The value must be unique.
+	/// </summary>
+	public string Id {
+		get => field;
+		set {
+			if (field != value) {
+				if (Passes.ContainsKey(value))
+					throw new InvalidOperationException($"The {nameof(Id)} must be unique.");
+				Passes.Remove(field);
+				Passes.TryAdd(value, this);
+				field = value;
+			}
+		}
+	} = "";
 
 	/// <summary>
 	/// The colour that the outline will render as.
@@ -78,37 +93,43 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 		set => field = Mathf.Max(0, value);
 	} = 1.8f;
 
-	#endregion
-
 	/// <summary>
-	/// Internal ID for the pass.
-	/// Used in localizing its menu options and naming its camera.
+	/// If set to the ID of a different pass, that other pass' silhouette will be
+	/// cut out of the final edge detection for this pass.
 	/// </summary>
-	public string Id { get; set; } = "";
+	public string ExcludePass {
+		get => field;
+		set => field = value ?? "";
+	} = "";
+
+	#endregion
 
 	/// <summary>
 	/// Collection of all existing passes.
 	/// </summary>
-	internal static readonly HashSet<EdgeDetectionPass> Passes = [];
+	internal static readonly Dictionary<string, EdgeDetectionPass> Passes = [];
 
 	/// <summary>Minimum outline width.</summary>
 	internal const byte WIDTH_MIN = 0;
 	/// <summary>Maximum outline width.</summary>
 	internal const byte WIDTH_MAX = 16;
 
-	Material silhouetteMaterial, edgeDetectionMaterial;
+	Material silMat, edgeMat;
 	Camera mainCam, detectorCam;
 	CameraShakeManager mainShaker, detectorShaker;
-	RenderTexture camTarget;
 
 	static readonly int
 		thresholdID = Shader.PropertyToID("_AlphaThreshold"),
 		lineColorID = Shader.PropertyToID("_LineColor"),
 		sceneTexID = Shader.PropertyToID("_SceneTex"),
-		finalID = Shader.PropertyToID("_FinalPass");
+		subtractTexID = Shader.PropertyToID("_SubtractTex");
+
+	const int
+		DETECT_PASS = 0,
+		COMPOSITE_PASS = 1;
 
 	void Start() {
-		Passes.Add(this);
+		Passes.TryAdd(Id, this);
 		mainCam = GetComponent<Camera>();
 
 		GameObject camGo = new($"{Id} Edge Detection Camera");
@@ -123,25 +144,15 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 
 		camGo.AddComponent<EdgeDetector>().Settings = this;
 
-		silhouetteMaterial = new Material(SilhouetteShader);
-		edgeDetectionMaterial = new Material(EdgeDetectionShader);
-	}
-
-	void OnDisable() {
-		if (camTarget && camTarget.IsCreated())
-			camTarget.Release();
+		edgeMat = new Material(EdgeDetectionShader);
+		silMat = new Material(SilhouetteShader);
 	}
 
 	void OnDestroy() {
 		DestroyImmediate(detectorCam.gameObject);
-		DestroyImmediate(silhouetteMaterial);
-		DestroyImmediate(edgeDetectionMaterial);
-		if (camTarget) {
-			if (camTarget.IsCreated())
-				camTarget.Release();
-			DestroyImmediate(camTarget);
-		}
-		Passes.Remove(this);
+		DestroyImmediate(silMat);
+		DestroyImmediate(edgeMat);
+		Passes.Remove(Id);
 	}
 
 	void OnRenderImage(RenderTexture source, RenderTexture destination) {
@@ -154,7 +165,31 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 			width = source.width / div,
 			height = source.height / div;
 
-		// Set up temp cam, cull all layers except the ones we're rendering
+		RenderTexture[] temp = GetEmptyTemporaryTextures(count: 3, width, height);
+
+		if (TryGetExcludePass(out var otherPass)) {
+			otherPass.RenderSilhouette(temp[2]);
+			edgeMat.SetTexture(subtractTexID, temp[2]);
+		} else {
+			edgeMat.SetTexture(subtractTexID, Texture2D.blackTexture);
+		}
+		edgeMat.SetColor(lineColorID, LineColor);
+		edgeMat.SetTexture(sceneTexID, source);
+
+		RenderSilhouette(temp[0]);
+
+		for (int i = 0; i < LineWidth; i++) {
+			Graphics.Blit(temp[0], temp[1], edgeMat, DETECT_PASS);
+			(temp[0], temp[1]) = (temp[1], temp[0]);
+		}
+
+		Graphics.Blit(temp[0], destination, edgeMat, COMPOSITE_PASS);
+
+		for (int i = 0; i < temp.Length; i++)
+			RenderTexture.ReleaseTemporary(temp[i]);
+	}
+
+	internal void RenderSilhouette(RenderTexture output) {
 		detectorCam.CopyFrom(mainCam);
 		detectorCam.clearFlags = CameraClearFlags.SolidColor;
 		detectorCam.backgroundColor = Color.clear;
@@ -173,56 +208,22 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 			detectorCam.nearClipPlane = 38;
 		}
 
-		// Grab the scene
-		if (camTarget && (camTarget.width != width || camTarget.height != height)) {
-			detectorCam.targetTexture = null;
-			camTarget.Release();
-			DestroyImmediate(camTarget);
-		}
-		if (!camTarget) {
-			camTarget = new(width, height, 32, RenderTextureFormat.ARGB32, 0);
-			camTarget.Create();
-		}
-		detectorCam.targetTexture = camTarget;
+		RenderTexture tx = GetEmptyTemporaryTextures(count: 1, output.width, output.height)[0];
+		detectorCam.targetTexture = tx;
 		detectorCam.Render();
-#if DEBUG
-		if (DebugOutput) SaveToFile("0_orig", camTarget);
-#endif
 
-		RenderTexture[] temp = GetEmptyTemporaryTextures(count: 2, width, height);
+		silMat.SetFloat(thresholdID, AlphaThreshold);
+		Graphics.Blit(tx, output, silMat);
 
-		// Render silhouette mask
-		silhouetteMaterial.SetFloat(thresholdID, AlphaThreshold);
-		Graphics.Blit(camTarget, temp[0], silhouetteMaterial);
-#if DEBUG
-		if (DebugOutput) SaveToFile("1_mask", temp[0]);
-#endif
+		detectorCam.targetTexture = null;
+		RenderTexture.ReleaseTemporary(tx);
+	}
 
-		// Accumulate edge detection up to the width parameter
-		edgeDetectionMaterial.SetInteger(finalID, 0);
-		for (int i = 0; i < LineWidth; i++) {
-			Graphics.Blit(temp[0], temp[1], edgeDetectionMaterial);
-			(temp[0], temp[1]) = (temp[1], temp[0]);
-#if DEBUG
-			if (DebugOutput) SaveToFile($"2_edge_{i:00}", temp[0]);
-#endif
-		}
-
-		// Composite the edge detection with the original camera view
-		edgeDetectionMaterial.SetInteger(finalID, 1);
-		edgeDetectionMaterial.SetColor(lineColorID, LineColor);
-		edgeDetectionMaterial.SetTexture(sceneTexID, source);
-		Graphics.Blit(temp[0], destination, edgeDetectionMaterial);
-#if DEBUG
-		if (DebugOutput) SaveToFile($"3_dest", destination);
-#endif
-
-		// Free memory
-		for (int i = 0; i < temp.Length; i++)
-			RenderTexture.ReleaseTemporary(temp[i]);
-#if DEBUG
-		DebugOutput = false;
-#endif
+	bool TryGetExcludePass(out EdgeDetectionPass other) {
+		other = null!;
+		return
+			ExcludePass != "" && ExcludePass != Id
+			&& Passes.TryGetValue(ExcludePass, out other);
 	}
 
 	static RenderTexture[] GetEmptyTemporaryTextures(int count, int width, int height) {
@@ -237,33 +238,4 @@ public class EdgeDetectionPass : MonoBehaviour, IComparable<EdgeDetectionPass> {
 		return texs;
 	}
 
-	public int CompareTo(EdgeDetectionPass other)
-		=> Id.CompareTo(other.Id);
-
-	public override int GetHashCode()
-		=> Id.GetHashCode();
-
-#if DEBUG
-	public bool DebugOutput { get; set; } = false;
-
-	static void SaveToFile(string name, RenderTexture tex) {
-		Texture2D tex2D = new(tex.width, tex.height, TextureFormat.RGBAFloat, false, true);
-
-		var oldRt = RenderTexture.active;
-		RenderTexture.active = tex;
-		tex2D.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0);
-		tex2D.Apply();
-		RenderTexture.active = oldRt;
-
-		File.WriteAllBytes(
-			$"{Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), name)}.png",
-			tex2D.EncodeToPNG()
-		);
-
-		if (Application.isPlaying)
-			Destroy(tex2D);
-		else
-			DestroyImmediate(tex2D);
-	}
-#endif
 }

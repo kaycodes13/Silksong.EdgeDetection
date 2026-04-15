@@ -18,6 +18,7 @@ internal abstract class ObjectVisualizer : MonoBehaviour {
 
 		if (!dupeParent) {
 			dupeParent = new GameObject("Edge Detection Visualizers");
+			DontDestroyOnLoad(dupeParent);
 			dupeParent.transform.Reset();
 		}
 		if (!dupe) {

@@ -46,16 +46,6 @@ record struct ObjectMods(
 	public const PhysLayers HIDE_LAYER = PhysLayers.PARTICLE;
 	public const int HIDE_LAYER_INT = (int)HIDE_LAYER;
 
-	public readonly void ClearAll() {
-		HideViaLayer?.Clear();
-		HideFromDetectors?.Clear();
-		HideCollider?.Clear();
-		HideSubColliders?.Clear();
-		ChangeLayer?.Clear();
-		ChangeAllLayers?.Clear();
-		VisualizeSprite?.Clear();
-	}
-
 	public readonly void Apply(Transform t) => Apply(t.gameObject);
 
 	public readonly void Apply(GameObject go) {
@@ -69,7 +59,7 @@ record struct ObjectMods(
 
 		if (ChangeAllLayers?.TryGetValue(name, out PhysLayers b) ?? false) {
 			foreach (Transform t in Utils.SelfAndWalkHierarchy(go) )
-				if (t.GetComponent<Renderer>() && !t.GetComponent<Collider2D>())
+				if (t.TryGetComponent<Renderer>(out var r) && r is not ParticleSystemRenderer && !t.GetComponent<Collider2D>())
 					t.gameObject.layer = (int)b;
 		}
 

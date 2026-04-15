@@ -15,4 +15,5 @@ internal record struct PassDef(
 	PhysLayers[] Layers,
 	float Threshold,
 	float ClipFar,
-	float ClipNear);
+	float ClipNear,
+	string ExcludePass);
