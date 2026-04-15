@@ -1,0 +1,15 @@
+﻿{
+	"MOD_TITLE": "Kantenerkennung",
+	"TERRAIN_NAME": "Gelände/Interaktiv",
+	"HAZARD_NAME": "Gefahr",
+	"PLAYER_NAME": "Spieler",
+
+	"BOOL_TRUE": "Ein",
+	"BOOL_FALSE": "Aus",
+
+	"LINE_COLOUR_LABEL": "Farbe",
+	"LINE_WIDTH_LABEL": "Breite",
+
+	"HALF_RES_LABEL": "Niedrige Auflösung",
+	"HALF_RES_DESC": "Kann die Leistung leicht verbessern."
+}

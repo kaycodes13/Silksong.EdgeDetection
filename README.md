@@ -17,3 +17,10 @@ Install via mod manager, such as [Cogfly](https://github.com/Nix-main/Cogfly/rel
 For manual installation, place the `.zip` file in the `BepInEx/plugins` directory for your Silksong install and extract it. You'll also have to manually install:
 * [I18N](https://thunderstore.io/c/hollow-knight-silksong/p/silksong_modding/I18N/)
 * [ModMenu](https://thunderstore.io/c/hollow-knight-silksong/p/silksong_modding/ModMenu/) and its dependencies.
+
+## Credits
+
+Special thanks to all the kind folks who helped me make this mod!
+
+* Lux and Jusiv for the moral support and links to shader resources
+* Praion for the German localization
