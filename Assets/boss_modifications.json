@@ -3,24 +3,33 @@
 	  "Silk_Hair_Single",
 	  "Silk_Hair_Single_Thin"
   ],
-  "ChangeLayer": {},
+  "ChangeLayer": {
+    "DC Hornet": "PLAYER",
+    "DC Phantom": "ENEMIES"
+  },
   "ChangeAllLayers": {
     "Splinter Queen Gate Spike": "ENEMY_ATTACK",
 	  "Ground Bells": "ENEMY_ATTACK",
 	  "Spinner_vertical_slash": "ENEMY_ATTACK",
 	  "Spinner_vertical_slash_long_new": "ENEMY_ATTACK",
-	  "HarpShots": "ENEMY_ATTACK"
+    "HarpShots": "ENEMY_ATTACK",
+    "Phantom": "ENEMY_ATTACK",
+    "Blood Stream": "PARTICLE",
+    "Boss Death Antic": "PARTICLE"
   },
   "HideCollider": [
     "Spinner AtkBell"
   ],
-  "VisualizeSprite": {},
+  "VisualizeSprite": {
+    "light_column": "ENEMY_ATTACK"
+  },
   "HideSubColliders": [
 	  "Driller A",
 	  "Driller B",
 	  "Spinner Boss",
 	  "Ground Bells",
 	  "Spinner_vertical_slash",
-	  "Spinner_vertical_slash_long_new"
+    "Spinner_vertical_slash_long_new",
+    "Phantom"
   ]
 }
