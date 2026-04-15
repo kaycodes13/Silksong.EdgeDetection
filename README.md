@@ -4,7 +4,7 @@ An accessibility mod for Hollow Knight: Silksong that adds customizable edge det
 
 ![Screenshot of Moss Grotto with edge detection on the terrain, Hornet, and one Mossmir](https://raw.githubusercontent.com/kaycodes13/Silksong.EdgeDetection/refs/heads/main/preview.png)
 
-Each layer can have its line thickness and colour changed individually.
+Each layer can have its line thickness and colour changed individually. The lines are not affected by the game's brightness or other graphics settings.
 
 Many regular rooms have been tested and the entire game should be playable, but I still refinements to make, especially for bosses. If you find a particular room, object, or boss that looks wrong, please [open an issue on the GitHub repository](https://github.com/kaycodes13/Silksong.EdgeDetection/issues/new).
 

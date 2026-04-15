@@ -14,10 +14,10 @@ internal static class ApplyObjectMods {
 	[HarmonyPatch(typeof(GameCameras), "Start")]
 	[HarmonyPostfix]
 	static void SoKParticles(GameCameras __instance) {
-		GameObject sokSceneParticles = __instance.sceneParticles
-			.transform.Find("blown_sand_particles").gameObject;
-
-		foreach (Transform t in Utils.WalkHierarchy(sokSceneParticles))
+		foreach (Transform t in Utils.WalkHierarchy(__instance.sceneParticles.gameObject))
+			t.gameObject.layer = ObjectMods.HIDE_LAYER_INT;
+			
+		foreach (Transform t in Utils.WalkHierarchy(__instance.transform.Find("Roar Wave Emitter").gameObject))
 			t.gameObject.layer = ObjectMods.HIDE_LAYER_INT;
 	}
 
@@ -70,11 +70,11 @@ internal static class ApplyObjectMods {
 	[HarmonyPostfix]
 	static void OnHeroAwake(HeroController __instance) {
 		ObjectMods hornetMods = Utils.ReadJsonAsset<ObjectMods>("hornet_modifications.json");
+
 		foreach (Transform t in Utils.WalkHierarchy(__instance.gameObject)) {
 			ShowColliderHideParticles(t);
 			hornetMods.Apply(t);
 		}
-		hornetMods.ClearAll();
 	}
 
 	#endregion

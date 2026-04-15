@@ -12,9 +12,10 @@
 			"DAMAGE_ALL",
 			"WATER"
 		],
-		"Threshold": 0.8,
+		"Threshold": 0.7,
 		"ClipFar": 0.0312,
-		"ClipNear": 2
+		"ClipNear": 2,
+		"ExcludePass": "PLAYER"
 	},
 	{
 		"Id": "HAZARD",
@@ -29,7 +30,8 @@
 		],
 		"Threshold": 0.4,
 		"ClipFar": 1.8,
-		"ClipNear": 1.8
+		"ClipNear": 1.8,
+		"ExcludePass": "TERRAIN"
 	},
 	{
 		"Id": "PLAYER",
@@ -41,6 +43,7 @@
 		],
 		"Threshold": 0.5,
 		"ClipFar": 1.8,
-		"ClipNear": 1.8
+		"ClipNear": 1.8,
+		"ExcludePass": ""
 	}
 ]
