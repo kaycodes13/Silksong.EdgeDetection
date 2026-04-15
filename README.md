@@ -18,9 +18,8 @@ For manual installation, place the `.zip` file in the `BepInEx/plugins` director
 * [I18N](https://thunderstore.io/c/hollow-knight-silksong/p/silksong_modding/I18N/)
 * [ModMenu](https://thunderstore.io/c/hollow-knight-silksong/p/silksong_modding/ModMenu/) and its dependencies.
 
-## Credits
+## Special Thanks to...
 
-Special thanks to all the kind folks who helped me make this mod!
-
+* Toaster for reminding me I had this idea and encouraging me to actually make it
 * Lux and Jusiv for the moral support and links to shader resources
 * Praion for the German localization
