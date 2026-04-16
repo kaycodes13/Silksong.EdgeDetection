@@ -23,3 +23,4 @@ For manual installation, place the `.zip` file in the `BepInEx/plugins` director
 * Toaster for reminding me I had this idea and encouraging me to actually make it
 * Lux and Jusiv for the moral support and links to shader resources
 * Praion for the German localization
+* TS_Terrapin for the Korean localization

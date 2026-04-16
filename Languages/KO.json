@@ -1,0 +1,15 @@
+﻿{
+	"MOD_TITLE": "가장자리 발견",
+	"TERRAIN_NAME": "지형/대화형",
+	"HAZARD_NAME": "위험요소",
+	"PLAYER_NAME": "플레이어",
+
+	"BOOL_TRUE": "켜다",
+	"BOOL_FALSE": "끄다",
+
+	"LINE_COLOUR_LABEL": "색깔",
+	"LINE_WIDTH_LABEL": "너비",
+
+	"HALF_RES_LABEL": "저해상도",
+	"HALF_RES_DESC": "서능을 약간 개선하기 가능"
+}
