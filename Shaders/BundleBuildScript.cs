@@ -12,7 +12,7 @@ public class CreateAssetBundle {
 			Directory.CreateDirectory(directory);
 			
 			AssetBundleBuild ab = new();
-			ab.assetBundleName = "shaders";
+			ab.assetBundleName = "shader";
 			ab.assetNames = Directory.EnumerateFiles("Assets/", "*.shader", SearchOption.AllDirectories).ToArray();
 			
 			BuildAssetBundlesParameters buildInput = new();

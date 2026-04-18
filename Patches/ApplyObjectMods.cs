@@ -31,11 +31,11 @@ internal static class ApplyObjectMods {
 		SceneManager.sceneLoaded += SceneLoadHandler;
 		
 		static void SceneChangeHandler(Scene _, Scene scene)
-			=> Plugin.StartCoroutine(Coro(scene));
+			=> Inst.StartCoroutine(Coro(scene));
 
 		static void SceneLoadHandler(Scene scene, LoadSceneMode mode) {
 			if (mode == LoadSceneMode.Additive)
-				Plugin.StartCoroutine(Coro(scene));
+				Inst.StartCoroutine(Coro(scene));
 		}
 
 		static IEnumerator Coro(Scene scene) {

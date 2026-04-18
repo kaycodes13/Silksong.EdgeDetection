@@ -4,7 +4,6 @@ using BepInEx.Logging;
 using EdgeDetection.Components;
 using EdgeDetection.Menu;
 using EdgeDetection.Structs;
-using GlobalEnums;
 using Silksong.ModMenu.Elements;
 using Silksong.ModMenu.Plugin;
 using Silksong.ModMenu.Screens;
@@ -21,20 +20,8 @@ namespace EdgeDetection;
 [BepInDependency("org.silksong-modding.i18n", "1.0.2")]
 public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 
-	/// <summary>
-	/// Instance of the plugin.
-	/// </summary>
-	internal static EdgeDetectionPlugin Plugin { get; private set; }
-
-	/// <summary>
-	/// Use to log debug info/errors/etc to the console.
-	/// </summary>
+	internal static EdgeDetectionPlugin Inst { get; private set; }
 	internal static ManualLogSource Log { get; private set; }
-
-	/// <summary>
-	/// Renders objects as a black/white mask.
-	/// </summary>
-	internal static Shader SilhouetteShader { get; private set; }
 
 	/// <summary>
 	/// Renders laplacian edge detection on black/white masks, then can be
@@ -45,23 +32,22 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 	/// <summary>
 	/// Definitions for all edge detection passes which should be performed, in order.
 	/// </summary>
-	internal static PassDef[] PassDefs { get; private set; }
+	internal static readonly PassDef[] PassDefs = Utils.ReadJsonAsset<PassDef[]>($"pass_definitions.json");
 
 	private static Harmony Harmony { get; } = new(Id);
 
 	void Awake() {
-		Plugin = this;
+		Inst = this;
 		Log = Logger;
 
 		// Find shaders
-		Utils.ReadAsset($"shaders.bundle", stream => {
+		Utils.ReadAsset($"shader.bundle", stream => {
 			AssetBundle bundle = AssetBundle.LoadFromStream(stream);
-			SilhouetteShader = bundle.LoadAsset<Shader>("assets/drawsilhouette.shader");
 			EdgeDetectionShader = bundle.LoadAsset<Shader>("assets/edgedetection.shader");
+			bundle.Unload(unloadAllLoadedObjects: false);
 		});
 
-		// Find passes & bind config for them
-		PassDefs = Utils.ReadJsonAsset<PassDef[]>($"pass_definitions.json");
+		// Bind config for the passes
 		int i = 0;
 		foreach(var pass in PassDefs) {
 			PassDefs[i++] = pass with {

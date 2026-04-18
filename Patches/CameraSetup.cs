@@ -19,7 +19,7 @@ internal static class CameraSetup {
 			detector.ClipNear,
 			detector.ExcludePass) = pass;
 
-			if (Plugin.GetPassConfig(pass.Id, out var c, out var w, out var h)) {
+			if (Inst.GetPassConfig(pass.Id, out var c, out var w, out var h)) {
 				c.SettingChanged += (_, e) => detector.LineColor = GetValue<Color>(e);
 				w.SettingChanged += (_, e) => detector.LineWidth = GetValue<byte>(e);
 				h.SettingChanged += (_, e) => detector.HalfResolution = GetValue<bool>(e);
