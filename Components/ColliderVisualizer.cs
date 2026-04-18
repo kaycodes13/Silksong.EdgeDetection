@@ -7,13 +7,13 @@ namespace EdgeDetection.Components;
 /// Visualizes colliders for edge detector cameras.
 /// </summary>
 internal class ColliderVisualizer : ObjectVisualizer {
-	Collider2D collider;
+	Collider2D collider = null!;
 	Lever? lever;
 	Vector3 origScale;
 	Mesh mesh;
 
 	protected override void InitDupe() {
-		dupe.name = $"{gameObject.name} Collider";
+		Dupe.name = $"{gameObject.name} Collider";
 
 		origScale = transform.lossyScale;
 		lever = transform.GetComponent<Lever>();
@@ -31,25 +31,25 @@ internal class ColliderVisualizer : ObjectVisualizer {
 		mesh.colors = [.. Enumerable.Repeat(Color.white, mesh.vertexCount)];
 
 		if (transform.GetComponent<DamageHero>())
-			dupe.layer = (int)PhysLayers.ENEMIES;
+			Dupe.layer = (int)PhysLayers.ENEMIES;
 		else
-			dupe.layer = gameObject.layer;
+			Dupe.layer = gameObject.layer;
 
-		dupe.AddComponent<MeshFilter>().mesh = mesh;
-		dupe.AddComponent<MeshRenderer>().material = new Material(shader);
-		dupe.AddComponent<HideFromCamera>().hideFromMain = true;
+		Dupe.AddComponent<MeshFilter>().mesh = mesh;
+		Dupe.AddComponent<MeshRenderer>().material = new Material(shader);
+		Dupe.AddComponent<HideFromCamera>().hideFromMain = true;
 	}
 
 	protected override void UpdateDupe() {
 		if (!mesh)
 			InitDupe();
 		else if (!collider.enabled || (lever && lever.hitBlocked))
-			dupe.SetActive(false);
+			Dupe.SetActive(false);
 		else {
 			// the mesh matches origScale's size when its scaled to (1,1,1).
 			// scales the mesh proportionally based on the difference between the
 			// collider's original scale and its current scale.
-			dupe.transform.localScale = Vector3.Scale(
+			Dupe.transform.localScale = Vector3.Scale(
 				Vector3.one,
 				transform.lossyScale.DivideElements(origScale)
 			);

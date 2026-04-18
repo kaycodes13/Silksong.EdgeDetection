@@ -18,24 +18,24 @@ internal class SpriteVisualizer : ObjectVisualizer {
 	Material dupeMat;
 
 	protected override void InitDupe() {
-		dupe.name = $"{gameObject.name} Sprite";
+		Dupe.name = $"{gameObject.name} Sprite";
 
 		if (TryGetComponent(out sprite)) {
-			dupeSprite = dupe.AddComponent<SpriteRenderer>();
+			dupeSprite = Dupe.AddComponent<SpriteRenderer>();
 			dupeSprite.materials = [.. sprite.materials.Select(x => new Material(x.shader))];
 		}
 		else if (TryGetComponent(out tk2d)) {
-			dupe.AddComponent<MeshFilter>();
-			dupeMesh = dupe.AddComponent<MeshRenderer>();
-			dupeTk2d = dupe.AddComponent<tk2dSprite>();
+			Dupe.AddComponent<MeshFilter>();
+			dupeMesh = Dupe.AddComponent<MeshRenderer>();
+			dupeTk2d = Dupe.AddComponent<tk2dSprite>();
 		}
 
 		if (sprite || tk2d)
-			dupe.AddComponent<HideFromCamera>().hideFromMain = true;
+			Dupe.AddComponent<HideFromCamera>().hideFromMain = true;
 	}
 
 	protected override void UpdateDupe() {
-		dupe.layer = (int)layer;
+		Dupe.layer = (int)layer;
 
 		if (sprite) {
 			dupeSprite.sprite = sprite.sprite;

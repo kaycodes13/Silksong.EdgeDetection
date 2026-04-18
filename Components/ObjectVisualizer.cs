@@ -6,7 +6,7 @@
 /// </summary>
 internal abstract class ObjectVisualizer : MonoBehaviour {
 
-	static GameObject dupeParent;
+	static GameObject dupeParent = null!;
 
 	#region Unity Messages
 
@@ -21,42 +21,42 @@ internal abstract class ObjectVisualizer : MonoBehaviour {
 			DontDestroyOnLoad(dupeParent);
 			dupeParent.transform.Reset();
 		}
-		if (!dupe) {
-			dupe = new();
-			dupe.transform.SetParentReset(dupeParent.transform);
+		if (!Dupe) {
+			Dupe = new();
+			Dupe.transform.SetParentReset(dupeParent.transform);
 			InitDupe();
 		}
 	}
 
 	void OnEnable() {
 		Start();
-		if (dupe && gameObject.activeInHierarchy)
-			dupe.SetActive(true);
+		if (Dupe && gameObject.activeInHierarchy)
+			Dupe.SetActive(true);
 	}
 
 	void Update() {
-		if (!dupe) Start();
-		if (!dupe) return;
+		if (!Dupe) Start();
+		if (!Dupe) return;
 
 		if (!gameObject.activeInHierarchy) {
-			dupe.SetActive(false);
+			Dupe.SetActive(false);
 			return;
 		}
-		dupe.SetActive(true);
-		dupe.transform.SetPositionAndRotation(transform.position, transform.rotation);
-		dupe.transform.localScale = transform.lossyScale;
+		Dupe.SetActive(true);
+		Dupe.transform.SetPositionAndRotation(transform.position, transform.rotation);
+		Dupe.transform.localScale = transform.lossyScale;
 
 		UpdateDupe();
 	}
 
 	void OnDisable() {
-		if (dupe)
-			dupe.SetActive(false);
+		if (Dupe)
+			Dupe.SetActive(false);
 	}
 
 	void OnDestroy() {
 		DestroyDupe();
-		Destroy(dupe);
+		Destroy(Dupe);
 	}
 
 	#endregion
@@ -81,16 +81,16 @@ internal abstract class ObjectVisualizer : MonoBehaviour {
 	/// <summary>
 	/// Secondary GameObject which should be used to do the visualization.
 	/// </summary>
-	protected GameObject dupe { get; private set; }
+	protected GameObject Dupe { get; private set; } = null!;
 
 	/// <summary>
-	/// Any necessary initialization for the <see cref="dupe"/> object.
+	/// Any necessary initialization for the <see cref="Dupe"/> object.
 	/// The object is already created when this runs.
 	/// </summary>
 	protected abstract void InitDupe();
 
 	/// <summary>
-	/// A routine run during LateUpdate that syncs <see cref="dupe"/> to its
+	/// A routine run during Update that syncs <see cref="Dupe"/> to its
 	/// primary GameObject.
 	/// </summary>
 	/// <remarks>
@@ -106,7 +106,7 @@ internal abstract class ObjectVisualizer : MonoBehaviour {
 	/// should be disposed of here.
 	/// </summary>
 	/// <remarks>
-	/// The <see cref="dupe"/> object itself is destroyed after this runs.
+	/// The <see cref="Dupe"/> object itself is destroyed after this runs.
 	/// </remarks>
 	protected abstract void DestroyDupe();
 
