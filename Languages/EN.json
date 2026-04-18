@@ -4,9 +4,6 @@
 	"HAZARD_NAME": "Hazard",
 	"PLAYER_NAME": "Player",
 
-	"BOOL_TRUE": "On",
-	"BOOL_FALSE": "Off",
-
 	"LINE_COLOUR_LABEL": "Colour",
 	"LINE_WIDTH_LABEL": "Width",
 

@@ -4,9 +4,6 @@
 	"HAZARD_NAME": "위험요소",
 	"PLAYER_NAME": "플레이어",
 
-	"BOOL_TRUE": "켜다",
-	"BOOL_FALSE": "끄다",
-
 	"LINE_COLOUR_LABEL": "색깔",
 	"LINE_WIDTH_LABEL": "너비",
 

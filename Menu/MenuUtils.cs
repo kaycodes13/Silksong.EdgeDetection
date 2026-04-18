@@ -20,7 +20,7 @@ internal static class MenuUtils {
 	internal static ListChoiceModel<bool> LocalizedBoolModel()
 		=> new([false, true]) {
 			DisplayFn = (idx, val)
-				=> val ? Localized("BOOL_TRUE") : Localized("BOOL_FALSE")
+				=> new LocalisedString("MainMenu", val ? "MOH_ON" : "MOH_OFF")
 		};
 
 	/// <summary>
