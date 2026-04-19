@@ -164,12 +164,14 @@ public class EdgeDetectionPass : MonoBehaviour {
 			width = source.width / div,
 			height = source.height / div;
 
-		RenderTexture[] temp = GetEmptyTemporaryTextures(count: 3, width, height);
+		RenderTexture[] temp;
 
 		if (TryGetExcludePass(out var otherPass)) {
+			temp = GetEmptyTemporaryTextures(count: 3, width, height);
 			otherPass.RenderSilhouette(temp[2]);
 			edgeMat.SetTexture(subtractTexID, temp[2]);
 		} else {
+			temp = GetEmptyTemporaryTextures(count: 2, width, height);
 			edgeMat.SetTexture(subtractTexID, Texture2D.blackTexture);
 		}
 		edgeMat.SetColor(lineColorID, LineColor);
@@ -220,8 +222,7 @@ public class EdgeDetectionPass : MonoBehaviour {
 
 	bool TryGetExcludePass(out EdgeDetectionPass other) {
 		other = null!;
-		return
-			ExcludePass != "" && ExcludePass != Id
+		return ExcludePass != "" && ExcludePass != Id
 			&& Passes.TryGetValue(ExcludePass, out other);
 	}
 
