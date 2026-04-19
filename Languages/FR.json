@@ -1,0 +1,12 @@
+﻿{
+	"MOD_TITLE": "Détection des contours",
+	"TERRAIN_NAME": "Terrain/Interactif",
+	"HAZARD_NAME": "Danger",
+	"PLAYER_NAME": "Joueur",
+
+	"LINE_COLOUR_LABEL": "Couleur",
+	"LINE_WIDTH_LABEL": "Épaisseur",
+
+	"HALF_RES_LABEL": "Basse résolution",
+	"HALF_RES_DESC": "Peut légèrement améliorer les performances."
+}
