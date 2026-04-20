@@ -1,0 +1,12 @@
+﻿{
+	"MOD_TITLE": "边缘检测",
+	"TERRAIN_NAME": "地形/可交互",
+	"HAZARD_NAME": "危险物",
+	"PLAYER_NAME": "玩家",
+
+	"LINE_COLOUR_LABEL": "颜色",
+	"LINE_WIDTH_LABEL": "线宽",
+
+	"HALF_RES_LABEL": "低分辨率",
+	"HALF_RES_DESC": "或许能稍微提升性能。"
+}
