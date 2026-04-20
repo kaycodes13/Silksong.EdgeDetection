@@ -25,3 +25,4 @@ For manual installation, place the `.zip` file in the `BepInEx/plugins` director
 * Praion for the German localization
 * TS_Terrapin for the Korean localization
 * Wangha for the French localization
+* Lonk for the Spanish localization

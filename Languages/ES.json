@@ -1,0 +1,12 @@
+﻿{
+	"MOD_TITLE": "Detección de bordes",
+	"TERRAIN_NAME": "Terreno/Interactivo",
+	"HAZARD_NAME": "Peligro",
+	"PLAYER_NAME": "Jugador",
+
+	"LINE_COLOUR_LABEL": "Color",
+	"LINE_WIDTH_LABEL": "Ancho",
+
+	"HALF_RES_LABEL": "Baja resolución",
+	"HALF_RES_DESC": "Puede lijeramente mejorar rendimiento."
+}
