@@ -45,10 +45,17 @@ internal static class ApplyObjectMods {
 			for (int i = 0; i < 2; i++) yield return null;
 			if (!scene.isLoaded) yield break;
 
-			foreach (Transform t in Utils.WalkHierarchy(scene.GetRootGameObjects())) {
+			GameObject[] roots = scene.GetRootGameObjects();
+
+			foreach (Transform t in Utils.WalkHierarchy(roots)) {
 				if (ObjectVisualizer.IsVisualizer(t))
 					continue;
 				ShowColliderHideParticles(t);
+			}
+			// second loop because ocasionally we need particle systems to show up; e.g. exhaust organ steam blasts
+			foreach (Transform t in Utils.WalkHierarchy(roots)) {
+				if (ObjectVisualizer.IsVisualizer(t))
+					continue;
 				genericMods.Apply(t);
 			}
 		}

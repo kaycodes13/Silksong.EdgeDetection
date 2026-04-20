@@ -1,11 +1,15 @@
 {
   "HideViaLayer": [
 	  "Silk_Hair_Single",
-	  "Silk_Hair_Single_Thin"
+    "Silk_Hair_Single_Thin",
+    "Join Ring",
+    "Join Glow",
+    "White Flash R",
   ],
   "ChangeLayer": {
     "DC Hornet": "PLAYER",
-    "DC Phantom": "ENEMIES"
+    "DC Phantom": "ENEMIES",
+    "cog_dancer_blade_sphere": "ENEMY_ATTACK"
   },
   "ChangeAllLayers": {
     "Splinter Queen Gate Spike": "ENEMY_ATTACK",
@@ -15,13 +19,17 @@
     "HarpShots": "ENEMY_ATTACK",
     "Phantom": "ENEMY_ATTACK",
     "Blood Stream": "PARTICLE",
-    "Boss Death Antic": "PARTICLE"
+    "Boss Death Antic": "PARTICLE",
+    "cog_dancer_fast_charge": "ENEMY_ATTACK"
   },
   "HideCollider": [
     "Spinner AtkBell"
   ],
   "VisualizeSprite": {
-    "light_column": "ENEMY_ATTACK"
+    "light_column": "ENEMY_ATTACK",
+    "SG_head": "ENEMIES",
+    "Hand": "ENEMIES",
+    "Hand Swipe": "ENEMY_ATTACK"
   },
   "HideSubColliders": [
 	  "Driller A",

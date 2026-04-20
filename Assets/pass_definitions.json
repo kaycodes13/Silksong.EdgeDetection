@@ -29,8 +29,8 @@
 			"PROJECTILES"
 		],
 		"Threshold": 0.5,
-		"ClipFar": 1.8,
-		"ClipNear": 1.8,
+		"ClipFar": 2,
+		"ClipNear": 3,
 		"ExcludePass": "TERRAIN"
 	},
 	{

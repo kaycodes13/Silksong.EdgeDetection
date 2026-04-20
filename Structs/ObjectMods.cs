@@ -57,8 +57,8 @@ record struct ObjectMods(
 			go.layer = (int)a;
 
 		if (ChangeAllLayers?.TryGetValue(name, out PhysLayers b) ?? false) {
-			foreach (Transform t in Utils.SelfAndWalkHierarchy(go) )
-				if (t.TryGetComponent<Renderer>(out var r) && r is not ParticleSystemRenderer && !t.GetComponent<Collider2D>())
+			foreach (Transform t in Utils.SelfAndWalkHierarchy(go))
+				if (t.GetComponent<Renderer>() && !t.GetComponent<Collider2D>())
 					t.gameObject.layer = (int)b;
 		}
 
