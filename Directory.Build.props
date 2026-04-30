@@ -2,6 +2,6 @@
   <PropertyGroup>
     <!-- These properties will control the generated plugin info and Thunderstore manifest. -->
     <AssemblyTitle>EdgeDetection</AssemblyTitle>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 </Project>
