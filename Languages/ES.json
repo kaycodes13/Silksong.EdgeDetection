@@ -1,5 +1,6 @@
 ﻿{
-	"MOD_TITLE": "Detección de bordes",
+	"EDGE_DETECTION": "Detección de bordes",
+
 	"TERRAIN_NAME": "Terreno/Interactivo",
 	"HAZARD_NAME": "Peligro",
 	"PLAYER_NAME": "Jugador",

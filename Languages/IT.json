@@ -1,0 +1,13 @@
+﻿{
+	"EDGE_DETECTION": "Rilevamento dei bordi",
+
+	"TERRAIN_NAME": "Terreno/Interattivo",
+	"HAZARD_NAME": "Pericoloso",
+	"PLAYER_NAME": "Giocatore",
+
+	"LINE_COLOUR_LABEL": "Colore",
+	"LINE_WIDTH_LABEL": "Larghezza",
+
+	"HALF_RES_LABEL": "Bassa Risoluzione",
+	"HALF_RES_DESC": "Può leggermente migliorare la prestazione."
+}

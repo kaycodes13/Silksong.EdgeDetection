@@ -1,7 +1,8 @@
 ﻿{
-	"MOD_TITLE": "Edge Detection",
+	"EDGE_DETECTION": "Edge Detection",
+
 	"TERRAIN_NAME": "Terrain/Interactive",
-	"HAZARD_NAME": "Hazard",
+	"HAZARD_NAME": "Enemies and Traps",
 	"PLAYER_NAME": "Player",
 
 	"LINE_COLOUR_LABEL": "Colour",

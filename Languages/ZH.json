@@ -1,7 +1,8 @@
 ﻿{
-	"MOD_TITLE": "边缘检测",
+	"EDGE_DETECTION": "边缘检测",
+
 	"TERRAIN_NAME": "地形/可交互",
-	"HAZARD_NAME": "危险物",
+	"HAZARD_NAME": "敌人与陷阱",
 	"PLAYER_NAME": "玩家",
 
 	"LINE_COLOUR_LABEL": "颜色",

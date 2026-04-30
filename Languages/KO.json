@@ -1,5 +1,6 @@
 ﻿{
-	"MOD_TITLE": "가장자리 발견",
+	"EDGE_DETECTION": "가장자리 발견",
+
 	"TERRAIN_NAME": "지형/대화형",
 	"HAZARD_NAME": "위험요소",
 	"PLAYER_NAME": "플레이어",

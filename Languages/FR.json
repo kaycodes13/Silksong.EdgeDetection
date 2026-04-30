@@ -1,5 +1,6 @@
 ﻿{
-	"MOD_TITLE": "Détection des contours",
+	"EDGE_DETECTION": "Détection des contours",
+
 	"TERRAIN_NAME": "Terrain/Interactif",
 	"HAZARD_NAME": "Ennemis et pièges",
 	"PLAYER_NAME": "Joueur",
