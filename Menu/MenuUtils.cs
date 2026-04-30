@@ -1,6 +1,5 @@
 ﻿using GlobalEnums;
 using Silksong.ModMenu.Elements;
-using Silksong.ModMenu.Models;
 using System.Collections.Generic;
 using System.Linq;
 using TeamCherry.Localization;
@@ -13,15 +12,6 @@ internal static class MenuUtils {
 	/// <see cref="LocalisedString"/> with the given <paramref name="key"/> for this mod.
 	/// </summary>
 	internal static LocalisedString Localized(string key) => new($"Mods.{Id}", key);
-
-	/// <summary>
-	/// Simple choice model for bools which localizes the values.
-	/// </summary>
-	internal static ListChoiceModel<bool> LocalizedBoolModel()
-		=> new([false, true]) {
-			DisplayFn = (idx, val)
-				=> new LocalisedString("MainMenu", val ? "MOH_ON" : "MOH_OFF")
-		};
 
 	/// <summary>
 	/// Creates a GameObject on the UI layer and sets its parent.

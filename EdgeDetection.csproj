@@ -33,14 +33,14 @@
     <PackageReference Include="Harmonize" Version="1.0.6" PrivateAssets="all" />
     <PackageReference Include="Hamunii.BepInEx.AutoPlugin" Version="2.1.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Unity.Analyzers" Version="1.26.0" PrivateAssets="all" />
-    <PackageReference Include="Silksong.ModMenu" Version="0.5.2" />
+    <PackageReference Include="Silksong.ModMenu" Version="0.6.0" />
     <PackageReference Include="UnityEngine.Modules" Version="6000.0.50" IncludeAssets="compile" />
     <PackageReference Include="Silksong.GameLibs" Version="*-*" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Remove="thunderstore/temp;thunderstore/dist" />
-    <None Remove="preview.png"/>
+    <None Remove="preview.png" />
     <EmbeddedResource Include="Assets/**/*" />
     <Compile Remove="Shaders/*" />
     <None Include="Shaders/*" />
