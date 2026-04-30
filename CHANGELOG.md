@@ -1,5 +1,9 @@
 # Edge Detection - Changelog
 
+## 1.0.3
+* Added Japanese, Russian, and Italian localization
+* Compatibility update for ModMenu v0.6.0
+
 ## 1.0.2
 * Visual improvements for Cogwork Dancers, Fourth Chorus, and several environmental hazards 
 * Added French localization

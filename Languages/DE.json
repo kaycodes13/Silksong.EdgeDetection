@@ -1,5 +1,6 @@
 ﻿{
-	"MOD_TITLE": "Randkennung",
+	"EDGE_DETECTION": "Randkennung",
+
 	"TERRAIN_NAME": "Gelände/Interaktiv",
 	"HAZARD_NAME": "Gefahr",
 	"PLAYER_NAME": "Spieler",

@@ -1,0 +1,13 @@
+﻿{
+	"EDGE_DETECTION": "Обнаружение Контуров",
+
+	"TERRAIN_NAME": "Окружение/Интерактивное",
+	"HAZARD_NAME": "Опасности",
+	"PLAYER_NAME": "Игрок",
+
+	"LINE_COLOUR_LABEL": "Цвет",
+	"LINE_WIDTH_LABEL": "Толщина",
+
+	"HALF_RES_LABEL": "Низкое Разрешение",
+	"HALF_RES_DESC": "Может слегка ускорить работу игры."
+}

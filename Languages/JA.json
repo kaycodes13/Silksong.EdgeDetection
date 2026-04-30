@@ -1,0 +1,13 @@
+﻿{
+	"EDGE_DETECTION": "エッジ検出",
+
+	"TERRAIN_NAME": "地形、オブジェクト",
+	"HAZARD_NAME": "障害物",
+	"PLAYER_NAME": "プレイヤー",
+
+	"LINE_COLOUR_LABEL": "色",
+	"LINE_WIDTH_LABEL": "太さ",
+
+	"HALF_RES_LABEL": "低画質描画",
+	"HALF_RES_DESC": "パフォーマンスが向上する可能性があります"
+}

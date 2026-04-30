@@ -20,11 +20,18 @@ For manual installation, place the `.zip` file in the `BepInEx/plugins` director
 
 ## Special Thanks to...
 
-* Toaster for reminding me I had this idea and encouraging me to actually make it
-* Lux and Jusiv for the moral support and links to shader resources
-* Praion for the German localization
-* TS_Terrapin for the Korean localization
-* Wangha for the French localization
-* Lonk for the Spanish localization
-* Manno Stone for the Brazilian Portugese localization
-* 明朝萧关客 (shownyoung) for the Simplified Chinese localization
+* Toaster for reminding me I had this idea and encouraging me to actually make it.
+* Lux and Jusiv for the moral support and links to shader resources.
+* The Playfriends discord, HK Modding discord, and Town of Us Mira team, for the help with translations.
+
+## Localization Credits
+
+* German - Praion
+* Korean - TS_Terrapin
+* French - Wangha
+* Spanish - Lonk
+* Brazilian Portugese - Manno Stone
+* Simplified Chinese - 明朝萧关客 (shownyoung)
+* Japanese - SawaYoshi
+* Russian - AntSkarr
+* Italian - DworZ

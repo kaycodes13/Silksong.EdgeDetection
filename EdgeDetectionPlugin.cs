@@ -76,7 +76,7 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 		return flag;
 	}
 
-	public LocalizedText ModMenuName() => Localized("MOD_TITLE");
+	public LocalizedText ModMenuName() => Localized("EDGE_DETECTION");
 
 	public AbstractMenuScreen BuildCustomMenu() {
 		VerticalGroup group = new();

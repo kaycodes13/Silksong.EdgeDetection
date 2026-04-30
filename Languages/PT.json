@@ -1,7 +1,8 @@
 ﻿{
-	"MOD_TITLE": "Detecção de bordas",
+	"EDGE_DETECTION": "Detecção de bordas",
+
 	"TERRAIN_NAME": "Campo/Interativo",
-	"HAZARD_NAME": "Perigo",
+	"HAZARD_NAME": "Inimigos e Armadilhas",
 	"PLAYER_NAME": "Jogador",
 
 	"LINE_COLOUR_LABEL": "Cor",
