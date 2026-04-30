@@ -7,6 +7,7 @@ using EdgeDetection.Structs;
 using Silksong.ModMenu.Elements;
 using Silksong.ModMenu.Plugin;
 using Silksong.ModMenu.Screens;
+using Silksong.ModMenu.Models;
 using System.Collections.Generic;
 using System.Linq;
 using static EdgeDetection.Menu.MenuUtils;
@@ -79,16 +80,19 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 	public LocalizedText ModMenuName() => Localized("EDGE_DETECTION");
 
 	public AbstractMenuScreen BuildCustomMenu() {
-		VerticalGroup group = new();
-		group.AddRange(EdgeDetectionPass.Passes.SelectMany(x => GenerateDetectorOptions(x.Value)));
-		return new ScrollMenuScreen(ModMenuName(), group);
+		ScrollingMenuScreen screen = new(ModMenuName());
+		screen.AddRange(EdgeDetectionPass.Passes.SelectMany(x => GenerateDetectorOptions(x.Value)));
+		return screen;
 	}
 
 	/// <summary>
 	/// Menu options for an <see cref="EdgeDetectionPass"/>.
 	/// </summary>
 	IEnumerable<MenuElement> GenerateDetectorOptions(EdgeDetectionPass pass) {
-		SubtitleLabel title = new(Localized($"{pass.Id}_NAME"));
+		TextLabel title = new(Localized($"{pass.Id}_NAME"));
+		title.SetFontSizes(FontSizes.Large);
+		title.Text.fontStyle = FontStyle.Italic;
+		title.RectTransform.sizeDelta = title.RectTransform.sizeDelta with { y = 105 };
 
 		HexColorInput colour = new(Localized("LINE_COLOUR_LABEL"));
 
@@ -99,7 +103,7 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 
 		ChoiceElement<bool> halfRes = new(
 			Localized("HALF_RES_LABEL"),
-			LocalizedBoolModel(),
+			ChoiceModels.ForBool(),
 			Localized("HALF_RES_DESC")
 		);
 
