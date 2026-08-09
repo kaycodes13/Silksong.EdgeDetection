@@ -17,8 +17,8 @@ namespace EdgeDetection;
 // TODO: i18n (ask for localization help?)
 
 [BepInAutoPlugin(id: "io.github.kaycodes13.edgedetection")]
-[BepInDependency("org.silksong-modding.modmenu", "0.5.2")]
-[BepInDependency("org.silksong-modding.i18n", "1.0.2")]
+[BepInDependency("org.silksong-modding.modmenu", "0.7.6")]
+[BepInDependency("org.silksong-modding.i18n", "1.1.1")]
 public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 
 	internal static EdgeDetectionPlugin Inst { get; private set; }
@@ -94,7 +94,9 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 		title.Text.fontStyle = FontStyle.Italic;
 		title.RectTransform.sizeDelta = title.RectTransform.sizeDelta with { y = 105 };
 
-		HexColorInput colour = new(Localized("LINE_COLOUR_LABEL"));
+		ColorInput colour = new(Localized("LINE_COLOUR_LABEL")) {
+			Format = ColorInput.InputFormat.RGB
+		};
 
 		WiderSliderElement<byte> width = new(
 			Localized("LINE_WIDTH_LABEL"),
