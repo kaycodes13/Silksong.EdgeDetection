@@ -94,7 +94,9 @@ public partial class EdgeDetectionPlugin : BaseUnityPlugin, IModMenuCustomMenu {
 		title.Text.fontStyle = FontStyle.Italic;
 		title.RectTransform.sizeDelta = title.RectTransform.sizeDelta with { y = 105 };
 
-		HexColorInput colour = new(Localized("LINE_COLOUR_LABEL"));
+		ColorInput colour = new(Localized("LINE_COLOUR_LABEL")) {
+			Format = ColorInput.InputFormat.RGB
+		};
 
 		WiderSliderElement<byte> width = new(
 			Localized("LINE_WIDTH_LABEL"),

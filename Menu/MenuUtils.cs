@@ -1,9 +1,4 @@
-﻿using GlobalEnums;
-using Silksong.ModMenu.Elements;
-using System.Collections.Generic;
-using System.Linq;
-using TeamCherry.Localization;
-using UnityEngine.UI;
+﻿using TeamCherry.Localization;
 
 namespace EdgeDetection.Menu;
 
@@ -13,43 +8,9 @@ internal static class MenuUtils {
 	/// </summary>
 	internal static LocalisedString Localized(string key) => new($"Mods.{Id}", key);
 
-	/// <summary>
-	/// Creates a GameObject on the UI layer and sets its parent.
-	/// </summary>
-	internal static GameObject UIGameObject(string name, GameObject? parent) {
-		GameObject go = new(name) { layer = (int)PhysLayers.UI };
-		if (parent)
-			go.transform.SetParentReset(parent.transform);
-		return go;
-	}
-
-	/// <summary>
-	/// Creates a new material using the default UI shader.
-	/// </summary>
-	internal static Material UIMaterial(Color? color = null) {
-		if (!uiShader)
-			uiShader = Shader.Find("UI/Default");
-		return new Material(uiShader) { color = color ?? Color.white };
-	}
-	static Shader? uiShader;
-
-	extension (GameObject go) {
-		internal RectTransform RectTransform => (RectTransform)go.transform;
-
-		internal void SetAnchors(Vector2 anchor)
-			=> go.RectTransform.anchorMax = go.RectTransform.anchorMin = anchor;
-
-		internal void SetSizeDelta(Vector2 size) => go.RectTransform.sizeDelta = size;
-	}
-
 	extension (Transform t) {
 		internal RectTransform AsRect => (RectTransform)t;
 		internal void SetAnchors(Vector2 anchor)
 			=> t.AsRect.anchorMax = t.AsRect.anchorMin = anchor;
-	}
-
-	extension (VerticalGroup v) {
-		internal IEnumerable<Selectable> AllSelectables()
-			=> v.AllElements().OfType<SelectableElement>().Select(x => x.SelectableComponent);
 	}
 }
